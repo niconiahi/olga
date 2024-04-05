@@ -1,0 +1,9 @@
+CREATE TABLE "video" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "hash" TEXT NOT NULL,
+  "title" TEXT NOT NULL,
+  "show" TEXT NOT NULL,
+  "date" DATETIME NOT NULL,
+  "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP, 
+  "updated_at" DATETIME
+);

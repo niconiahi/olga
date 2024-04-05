@@ -1,0 +1,50 @@
+{
+  "name": "olga",
+  "type": "module",
+  "private": true,
+  "sideEffects": false,
+  "scripts": {
+    "build": "remix vite:build",
+    "deploy": "wrangler pages deploy ./build/client",
+    "dev": "remix vite:dev",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "start": "wrangler pages dev ./build/client",
+    "typecheck": "tsc",
+    "typegen": "wrangler types",
+    "db:migrate": "wrangler d1 migrations apply olga-tv",
+    "db:migrate:local": "wrangler d1 migrations apply olga-tv --local",
+    "db:types": "npx kysely-codegen --out-file app/generated/db.ts --dialect=sqlite"
+  },
+  "dependencies": {
+    "@biomejs/biome": "^1.6.4",
+    "@remix-run/cloudflare": "^2.8.1",
+    "@remix-run/cloudflare-pages": "^2.8.1",
+    "@remix-run/react": "^2.8.1",
+    "arctic": "^1.5.0",
+    "clsx": "^2.1.0",
+    "isbot": "^4.1.0",
+    "kysely": "^0.27.3",
+    "kysely-d1": "^0.3.0",
+    "lucia": "^3.1.1",
+    "miniflare": "^3.20231030.4",
+    "oslo": "^1.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "valibot": "^0.30.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.12.1",
+    "@cloudflare/workers-types": "^4.20230518.0",
+    "@remix-run/dev": "^2.8.1",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "better-sqlite3": "^9.4.5",
+    "eslint-plugin-format": "^0.1.0",
+    "kysely-codegen": "^0.14.2",
+    "typescript": "^5.1.6",
+    "vite": "^5.1.0",
+    "vite-tsconfig-paths": "^4.2.1",
+    "wrangler": "^3.24.0"
+  }
+}

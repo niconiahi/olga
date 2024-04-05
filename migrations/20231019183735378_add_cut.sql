@@ -1,0 +1,7 @@
+CREATE TABLE "cut" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "label" TEXT NOT NULL,
+  "start" TEXT NOT NULL,
+  "video_id" INTEGER NOT NULL,
+  FOREIGN KEY(video_id) REFERENCES video(id)
+);
