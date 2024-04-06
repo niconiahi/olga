@@ -6,8 +6,8 @@ compatibility_flags = [
 
 [[d1_databases]]
 binding = "DB"
-database_name = "olga-tv"
-database_id = "f6526f17-e0eb-474b-8a33-f8d152c96769"
+database_name = "olga-db"
+database_id = "0382c705-acd5-4198-82f5-d9a0381a566f"
 preview_database_id = "DB"
 
 [[r2_buckets]]

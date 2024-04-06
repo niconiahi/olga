@@ -1,16 +1,13 @@
-import type { RequestEventBase } from "@builder.io/qwik-city"
 import { D1Adapter } from "@lucia-auth/adapter-sqlite"
+import { AppLoadContext } from "@remix-run/cloudflare"
 import { Google } from "arctic"
 import { Lucia, verifyRequestOrigin } from "lucia"
-import { getDatabase } from "~/utils/database"
 import { getEnv } from "~/utils/env"
 import { getOrigin } from "~/utils/routes"
 
-export function getAuth(requestEvent: RequestEventBase) {
-  const { env: envGetter, platform } = requestEvent
-  const database = getDatabase(platform)
-  const env = getEnv(envGetter)
-  const adapter = new D1Adapter(database, {
+export function getAuth(context: AppLoadContext) {
+  const env = getEnv(context)
+  const adapter = new D1Adapter(env.DB, {
     user: "user",
     session: "session",
   })
@@ -42,9 +39,8 @@ declare module "lucia" {
   }
 }
 
-export function createGoogleAuth(requestEvent: RequestEventBase) {
-  const { env: envGetter } = requestEvent
-  const env = getEnv(envGetter)
+export function createGoogleAuth(context: AppLoadContext) {
+  const env = getEnv(context)
   return new Google(
     env.GOOGLE_CLIENT_ID,
     env.GOOGLE_CLIENT_SECRET,
@@ -52,10 +48,9 @@ export function createGoogleAuth(requestEvent: RequestEventBase) {
   )
 }
 
-export async function validateSession(requestEvent: RequestEventBase) {
-  const { cookie, env: envGetter, request } = requestEvent
-  const env = getEnv(envGetter)
-  const auth = getAuth(requestEvent)
+export async function validateSession(request: Request, context: AppLoadContext) {
+  const env = getEnv(context)
+  const auth = getAuth(context)
 
   //  NOTE: CSRF protection
   const originHeader = request.headers.get("Origin")
@@ -71,7 +66,8 @@ export async function validateSession(requestEvent: RequestEventBase) {
     })
   }
 
-  const sessionId = cookie.get(auth.sessionCookieName)
+  const cookieHeader = request.headers.get("Cookie")
+  const sessionId = auth.readSessionCookie(cookieHeader ?? "")
   if (!sessionId) {
     return {
       session: null,
@@ -80,26 +76,14 @@ export async function validateSession(requestEvent: RequestEventBase) {
   }
 
   const headers = new Headers()
-
-  const { session, user } = await auth.validateSession(sessionId.value)
+  const { session, user } = await auth.validateSession(sessionId)
   if (!session) {
     const sessionCookie = auth.createBlankSessionCookie()
     headers.append("Set-Cookie", sessionCookie.serialize())
-    cookie.set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes,
-    )
   }
-
   if (session && session.fresh) {
     const sessionCookie = auth.createSessionCookie(session.id)
     headers.append("Set-Cookie", sessionCookie.serialize())
-    cookie.set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes,
-    )
   }
 
   return { session, user }
