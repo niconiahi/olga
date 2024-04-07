@@ -23,28 +23,28 @@
     "@remix-run/react": "^2.8.1",
     "arctic": "^1.5.0",
     "clsx": "^2.1.0",
-    "isbot": "^4.1.0",
+    "isbot": "^5.1.4",
     "kysely": "^0.27.3",
     "kysely-d1": "^0.3.0",
     "lucia": "^3.1.1",
-    "miniflare": "^3.20231030.4",
+    "miniflare": "^3.20240404.0",
     "oslo": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "valibot": "^0.30.0"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.12.1",
-    "@cloudflare/workers-types": "^4.20230518.0",
+    "@antfu/eslint-config": "^2.12.2",
+    "@cloudflare/workers-types": "^4.20240405.0",
     "@remix-run/dev": "^2.8.1",
-    "@types/react": "^18.2.20",
-    "@types/react-dom": "^18.2.7",
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.24",
     "better-sqlite3": "^9.4.5",
     "eslint-plugin-format": "^0.1.0",
     "kysely-codegen": "^0.14.2",
-    "typescript": "^5.1.6",
-    "vite": "^5.1.0",
-    "vite-tsconfig-paths": "^4.2.1",
-    "wrangler": "^3.24.0"
+    "typescript": "^5.4.4",
+    "vite": "^5.2.8",
+    "vite-tsconfig-paths": "^4.3.2",
+    "wrangler": "^3.48.0"
   }
 }

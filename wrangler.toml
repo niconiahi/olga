@@ -7,8 +7,7 @@ compatibility_flags = [
 [[d1_databases]]
 binding = "DB"
 database_name = "olga-db"
-database_id = "7323a457-114b-4055-a35a-b1046a5d2202"
-preview_database_id = "DB"
+database_id = "a51efe05-83e7-4df0-96c2-8fc06d94c66c"
 
 [[r2_buckets]]
 binding = "SOUNDS"
