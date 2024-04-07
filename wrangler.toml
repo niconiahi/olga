@@ -7,7 +7,7 @@ compatibility_flags = [
 [[d1_databases]]
 binding = "DB"
 database_name = "olga-db"
-database_id = "0382c705-acd5-4198-82f5-d9a0381a566f"
+database_id = "7323a457-114b-4055-a35a-b1046a5d2202"
 preview_database_id = "DB"
 
 [[r2_buckets]]
