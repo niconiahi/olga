@@ -155,7 +155,7 @@ export default function() {
       <section className="mt-2 flex">
         <ul className="w-full grow space-y-2">
           {cutsByDay
-            .slice()
+            .slice(0, 1)
             .reverse()
             .map(([date, cuts], index) => {
               return (
@@ -240,7 +240,7 @@ function Heart({
   userId: string | undefined,
   id: number
 }) {
-  const fetcher = useFetcher()
+  const fetcher = useFetcher({ key: `upvote-${id}` })
   const isRequesting = fetcher.state === 'submitting' || fetcher.state === 'loading'
 
   return (
@@ -340,10 +340,8 @@ function Heart({
           }
           aria-pressed={isUpvoted}
         >
-          {isRequesting && isUpvoted ? (
+          {isRequesting ? (
             <HeartIcon className='h-6 w-7 fill-gray-300 text-gray-500' />
-          ) : isRequesting && !isUpvoted ? (
-            <HeartIcon className='h-6 w-7 fill-transparent text-gray-300' />
           ) : (
             <HeartIcon
               className={clsx([
