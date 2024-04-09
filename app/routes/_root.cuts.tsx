@@ -172,7 +172,7 @@ export default function() {
                     {cuts.map(([show, cuts]) => {
                       return (
                         <li
-                          key={`show-${date}-${show}`}
+                          key={`show-${date.toISOString()}-${show}`}
                           className={clsx([
                             "mr-0.5 space-y-2 border-2 p-2",
                             show === "seria-increible" && `border-show-seriaIncreible-primary shadow-seriaIncreible`,
@@ -199,6 +199,7 @@ export default function() {
                               .map(({ label, start, hash, id, isUpvoted }) => {
                                 return (
                                   <Heart
+                                    key={`cut-${show}-${hash}-${getSeconds(start)}-${id}`}
                                     id={id}
                                     hash={hash}
                                     isUpvoted={isUpvoted}
@@ -244,10 +245,7 @@ function Heart({
   const isRequesting = fetcher.state === 'submitting' || fetcher.state === 'loading'
 
   return (
-    <li
-      key={`cut-${show}-${hash}-${getSeconds(start)}-${id}`}
-      className="flex items-start space-x-2 py-0.5"
-    >
+    <li className="flex items-start space-x-2 py-0.5">
       <a
         className={clsx([
           "flex w-full items-start justify-between space-x-2 px-0.5 font-medium md:hover:cursor-pointer",
