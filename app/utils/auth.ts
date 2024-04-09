@@ -43,22 +43,23 @@ export async function validateSession(
   request: Request,
   context: AppLoadContext
 ) {
-  const env = getEnv(context)
+  // const env = getEnv(context)
   const auth = getAuth(context)
 
   //  NOTE: CSRF protection
-  const originHeader = request.headers.get("Origin")
-  const hostHeader = request.headers.get("Host")
-  if (
-    env.ENVIRONMENT === "production"
-    && (!originHeader
-      || !hostHeader
-      || !verifyRequestOrigin(originHeader, [hostHeader]))
-  ) {
-    throw new Response(null, {
-      status: 403,
-    })
-  }
+  //
+  // const originHeader = request.headers.get("Origin")
+  // const hostHeader = request.headers.get("Host")
+  // if (
+  //   env.ENVIRONMENT === "production"
+  //   && (!originHeader
+  //     || !hostHeader
+  //     || !verifyRequestOrigin(originHeader, [hostHeader]))
+  // ) {
+  //   throw new Response(null, {
+  //     status: 403,
+  //   })
+  // }
 
   const cookieHeader = request.headers.get("Cookie")
   const sessionId = auth.readSessionCookie(cookieHeader ?? "")
