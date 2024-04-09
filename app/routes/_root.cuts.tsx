@@ -32,9 +32,7 @@ export async function loader({
   const searchParams = new URLSearchParams(url.search)
   const query = searchParams.get("query")
   const { user } = await validateSession(request, context)
-  console.log("userId", user?.id ?? "no userId")
   const upvotes = user ? await (await fetch(`${url.origin}/upvote/get/${user.id}`)).json() : []
-  console.log("upvotes", upvotes)
   const raws = await (await fetch(`${url.origin}/cut/get/all`)).json()
 
   const result = v.safeParse(CutsSchema, raws)
@@ -108,7 +106,6 @@ export async function loader({
 
 export default function() {
   const { cutsByDay: _cutsByDay, query: initialQuery, userId, upvotes } = useLoaderData<typeof loader>()
-  console.log('client upvotes', upvotes)
   const [query, setQuery] = useState<string>(initialQuery ?? '')
   const cutsByDay = v.parse(cutsByDaySchema, _cutsByDay)
   const fetcher = useFetcher()

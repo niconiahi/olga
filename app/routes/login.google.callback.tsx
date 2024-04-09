@@ -53,9 +53,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
   if (existingUser) {
     const session = await auth.createSession(existingUser.id, {})
-    console.log("session", session)
     const sessionCookie = auth.createSessionCookie(session.id)
-    console.log("sessionCookie", sessionCookie)
     const headers = new Headers()
     headers.append("Set-Cookie", sessionCookie.serialize())
     return redirect("/", { headers })

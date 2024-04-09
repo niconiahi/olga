@@ -15,7 +15,6 @@ export async function action({
   request,
   context
 }: ActionFunctionArgs) {
-  console.log("adding the cuts =>")
   const formData = await request.formData()
   const valuesResult = v.safeParse(ValuesSchema, {
     day: formData.get("day"),

@@ -19,7 +19,6 @@ export async function action({ request }: ActionFunctionArgs) {
     isUpvoted: formData.get("isUpvoted"),
     userId: formData.get("userId"),
   })
-  console.log('valuesResult', valuesResult)
   if (!valuesResult.success) {
     return fail(400, {
       success: false,

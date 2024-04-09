@@ -18,10 +18,7 @@ export async function loader({
   context,
   params
 }: LoaderFunctionArgs) {
-  console.log("starting loading upvote get all")
-
   const _userId = params.userId
-  console.log("_userId", _userId)
   const userIdResult = v.safeParse(
     UserIdSchema,
     _userId
@@ -30,7 +27,6 @@ export async function loader({
     throw error(500, userIdResult.issues[0].message)
   }
   const userId = userIdResult.output
-  console.log("upvote.get.userid => userId", userId)
 
   const queryBuilder = getQueryBuilder(context)
   const upvotes = await queryBuilder
@@ -38,7 +34,6 @@ export async function loader({
     .selectAll()
     .where("user_id", "=", userId)
     .execute()
-  console.log("upvotes", upvotes)
 
   return json(upvotes)
 }

@@ -63,7 +63,6 @@ export async function validateSession(
 
   const cookieHeader = request.headers.get("Cookie")
   const sessionId = auth.readSessionCookie(cookieHeader ?? "")
-  console.log("sessionId", sessionId)
   if (!sessionId) {
     return {
       session: null,
@@ -73,8 +72,6 @@ export async function validateSession(
 
   const headers = new Headers()
   const { session, user } = await auth.validateSession(sessionId)
-  console.log("session", session)
-  console.log("user", user)
   if (!session) {
     const sessionCookie = auth.createBlankSessionCookie()
     headers.append("Set-Cookie", sessionCookie.serialize())
