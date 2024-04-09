@@ -18,11 +18,6 @@ export function getAuth(context: AppLoadContext) {
         secure: env.ENVIRONMENT === "production",
       },
     },
-    getUserAttributes: (attributes) => {
-      return {
-        email: attributes.email,
-      }
-    },
   })
   return auth
 }
@@ -30,12 +25,8 @@ export function getAuth(context: AppLoadContext) {
 type Auth = ReturnType<typeof getAuth>
 
 declare module "lucia" {
-  interface DatabaseUserAttributes {
-    email: string
-  }
   interface Register {
     Auth: Auth
-    DatabaseUserAttributes: DatabaseUserAttributes
   }
 }
 
@@ -48,7 +39,10 @@ export function createGoogleAuth(context: AppLoadContext) {
   )
 }
 
-export async function validateSession(request: Request, context: AppLoadContext) {
+export async function validateSession(
+  request: Request,
+  context: AppLoadContext
+) {
   const env = getEnv(context)
   const auth = getAuth(context)
 
@@ -68,6 +62,7 @@ export async function validateSession(request: Request, context: AppLoadContext)
 
   const cookieHeader = request.headers.get("Cookie")
   const sessionId = auth.readSessionCookie(cookieHeader ?? "")
+  console.log("sessionId", sessionId)
   if (!sessionId) {
     return {
       session: null,
@@ -77,6 +72,8 @@ export async function validateSession(request: Request, context: AppLoadContext)
 
   const headers = new Headers()
   const { session, user } = await auth.validateSession(sessionId)
+  console.log("session", session)
+  console.log("user", user)
   if (!session) {
     const sessionCookie = auth.createBlankSessionCookie()
     headers.append("Set-Cookie", sessionCookie.serialize())

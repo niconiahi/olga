@@ -1,0 +1,61 @@
+font-face {
+  font-family: "Bebas Kai";
+  src: url("/fonts/BebasKai.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Mabry Pro";
+  src: url("/fonts/MabryPro-Medium.ttf") format("truetype");
+  font-weight: medium;
+  font-style: medium;
+  font-display: block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+.mabry {
+  font-family: "Mabry Pro";
+} 
+
+.bebas {
+  font-family: "Bebas Kai";
+}
+
+body, input {
+  background-color: theme(colors.brand.stone);
+}
+
+html::-webkit-scrollbar {
+  position: absolute;
+  width: 4px;
+  height: 20px;
+  margin-right: 2px;
+  background: theme(colors.brand.stone);
+}
+
+html::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: theme(colors.brand.blue);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.outline-3 {
+  outline-width: 3px;
+}
+

@@ -5,6 +5,7 @@ import { createGoogleAuth, getAuth, validateSession } from "~/utils/auth"
 import { LoaderFunctionArgs, redirect } from "@remix-run/cloudflare"
 import { getCodeVerifierCookie, getStateCookie } from "~/cookies.server"
 import * as v from "valibot"
+import { error } from "~/utils/http"
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const auth = getAuth(context)
@@ -21,9 +22,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const state = searchParams.get("state")
 
   if (!code || !storedState || !storedCodeVerifier || state !== storedState || typeof storedCodeVerifier !== 'string') {
-    throw new Response(`expected Google's states to match but the don't`, {
-      status: 400
-    })
+    throw error(400, `expected Google's states to match but the don't`)
   }
 
   const tokens = await googleAuth.validateAuthorizationCode(code, storedCodeVerifier)
@@ -54,10 +53,12 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
 
   if (existingUser) {
     const session = await auth.createSession(existingUser.id, {})
+    console.log("session", session)
     const sessionCookie = auth.createSessionCookie(session.id)
+    console.log("sessionCookie", sessionCookie)
     const headers = new Headers()
     headers.append("Set-Cookie", sessionCookie.serialize())
-    redirect("/", { headers })
+    return redirect("/", { headers })
   }
 
   const userId = generateId(15)
@@ -73,7 +74,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const sessionCookie = auth.createSessionCookie(session.id)
   const headers = new Headers()
   headers.append("Set-Cookie", sessionCookie.serialize())
-  throw redirect("/", { headers })
+  return redirect("/", { headers })
 }
 
 
