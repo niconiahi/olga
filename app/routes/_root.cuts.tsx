@@ -242,7 +242,6 @@ function Heart({
 }) {
   const fetcher = useFetcher()
   const isRequesting = fetcher.state === 'submitting' || fetcher.state === 'loading'
-  console.log("isRequesting", isRequesting)
 
   return (
     <li
@@ -252,7 +251,7 @@ function Heart({
       <a
         className={clsx([
           "flex w-full items-start justify-between space-x-2 px-0.5 font-medium md:hover:cursor-pointer",
-          `outline-4 focus-visible:outline  `,
+          `outline-4 focus-visible:outline`,
           show === "seria-increible" && `focus-visible:outline-show-seriaIncreible-primary md:hover:bg-show-seriaIncreible-primaryHover`,
           show === "sone-que-volaba" && `focus-visible:outline-show-soneQueVolaba-primary md:hover:bg-show-soneQueVolaba-primaryHover`,
           show === "paraiso-fiscal" && `focus-visible:outline-show-paraisoFiscal-primary md:hover:bg-show-paraisoFiscal-primaryHover`,
@@ -341,27 +340,31 @@ function Heart({
           }
           aria-pressed={isUpvoted}
         >
-          <HeartIcon
-            className={clsx([
-              "h-6 w-7",
-              isUpvoted && show === "seria-increible" && `fill-show-seriaIncreible-primaryHover text-show-seriaIncreible-primary`,
-              isUpvoted && show === "sone-que-volaba" && `fill-show-soneQueVolaba-primaryHover text-show-soneQueVolaba-primary`,
-              isUpvoted && show === "paraiso-fiscal" && `fill-show-paraisoFiscal-primaryHover text-show-paraisoFiscal-primary`,
-              isUpvoted && show === "se-extrana-a-la-nona" && `fill-show-seExtranaALaNona-primaryHover text-show-seExtranaALaNona-primary`,
-              isUpvoted && show === "generacion-dorada" && `fill-show-generacionDorada-primaryHover text-show-generacionDorada-primary`,
-              isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-show-cuandoEricConocioAMilton-primaryHover text-show-cuandoEricConocioAMilton-primary`,
-              isUpvoted && show === "mi-primo-es-asi" && `fill-show-miPrimoEsAsi-primaryHover text-show-miPrimoEsAsi-primary`,
-              !isUpvoted && show === "seria-increible" && `fill-transparent text-show-seriaIncreible-primaryHover`,
-              !isUpvoted && show === "sone-que-volaba" && `fill-transparent text-show-soneQueVolaba-primaryHover`,
-              !isUpvoted && show === "paraiso-fiscal" && `fill-transparent text-show-paraisoFiscal-primaryHover`,
-              !isUpvoted && show === "se-extrana-a-la-nona" && `fill-transparent text-show-seExtranaALaNona-primaryHover`,
-              !isUpvoted && show === "generacion-dorada" && `fill-transparent text-show-generacionDorada-primaryHover`,
-              !isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-transparent text-show-cuandoEricConocioAMilton-primaryHover`,
-              !isUpvoted && show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`,
-              isUpvoted && isRequesting && "fill-gray-200 text-gray-400",
-              !isUpvoted && isRequesting && "text-gray-300"
-            ])}
-          />
+          {isRequesting && isUpvoted ? (
+            <HeartIcon className='h-6 w-7 fill-gray-300 text-gray-500' />
+          ) : isRequesting && !isUpvoted ? (
+            <HeartIcon className='h-6 w-7 fill-transparent text-gray-300' />
+          ) : (
+            <HeartIcon
+              className={clsx([
+                "h-6 w-7",
+                isUpvoted && show === "seria-increible" && `fill-show-seriaIncreible-primaryHover text-show-seriaIncreible-primary`,
+                isUpvoted && show === "sone-que-volaba" && `fill-show-soneQueVolaba-primaryHover text-show-soneQueVolaba-primary`,
+                isUpvoted && show === "paraiso-fiscal" && `fill-show-paraisoFiscal-primaryHover text-show-paraisoFiscal-primary`,
+                isUpvoted && show === "se-extrana-a-la-nona" && `fill-show-seExtranaALaNona-primaryHover text-show-seExtranaALaNona-primary`,
+                isUpvoted && show === "generacion-dorada" && `fill-show-generacionDorada-primaryHover text-show-generacionDorada-primary`,
+                isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-show-cuandoEricConocioAMilton-primaryHover text-show-cuandoEricConocioAMilton-primary`,
+                isUpvoted && show === "mi-primo-es-asi" && `fill-show-miPrimoEsAsi-primaryHover text-show-miPrimoEsAsi-primary`,
+                !isUpvoted && show === "seria-increible" && `fill-transparent text-show-seriaIncreible-primaryHover`,
+                !isUpvoted && show === "sone-que-volaba" && `fill-transparent text-show-soneQueVolaba-primaryHover`,
+                !isUpvoted && show === "paraiso-fiscal" && `fill-transparent text-show-paraisoFiscal-primaryHover`,
+                !isUpvoted && show === "se-extrana-a-la-nona" && `fill-transparent text-show-seExtranaALaNona-primaryHover`,
+                !isUpvoted && show === "generacion-dorada" && `fill-transparent text-show-generacionDorada-primaryHover`,
+                !isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-transparent text-show-cuandoEricConocioAMilton-primaryHover`,
+                !isUpvoted && show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`
+              ])}
+            />
+          )}
         </button>
       </fetcher.Form>
     </li>
