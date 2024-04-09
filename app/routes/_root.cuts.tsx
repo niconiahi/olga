@@ -3,7 +3,7 @@ import type { Cuts } from "~/routes/cut.get.all"
 import { CutsSchema } from "~/routes/cut.get.all"
 import { HeartIcon } from "~/components/icons/heart"
 import { getSeconds } from "~/utils/cut"
-import { ShowSchema } from "~/utils/video"
+import { Show, ShowSchema } from "~/utils/video"
 import { getDay, getMonth } from "~/utils/date"
 import { validateSession } from "~/utils/auth"
 import { ShowIcon } from "~/components/icons/show-icon"
@@ -121,7 +121,6 @@ export default function() {
   const { cutsByDay: _cutsByDay, query: initialQuery, userId, upvotes } = useLoaderData<typeof loader>()
   const [query, setQuery] = useState<string>(initialQuery ?? '')
   const cutsByDay = v.parse(cutsByDaySchema, _cutsByDay)
-  const fetcher = useFetcher()
 
   return (
     <>
@@ -199,123 +198,15 @@ export default function() {
                               })
                               .map(({ label, start, hash, id, isUpvoted }) => {
                                 return (
-                                  <li
-                                    key={`cut-${show}-${hash}-${getSeconds(start)}`}
-                                    className="flex items-start space-x-2 py-0.5"
-                                  >
-                                    <a
-                                      className={clsx([
-                                        "flex w-full items-start justify-between space-x-2 px-0.5 font-medium md:hover:cursor-pointer",
-                                        `outline-4 focus-visible:outline  `,
-                                        show === "seria-increible" && `focus-visible:outline-show-seriaIncreible-primary md:hover:bg-show-seriaIncreible-primaryHover`,
-                                        show === "sone-que-volaba" && `focus-visible:outline-show-soneQueVolaba-primary md:hover:bg-show-soneQueVolaba-primaryHover`,
-                                        show === "paraiso-fiscal" && `focus-visible:outline-show-paraisoFiscal-primary md:hover:bg-show-paraisoFiscal-primaryHover`,
-                                        show === "se-extrana-a-la-nona" && `focus-visible:outline-show-seExtranaALaNona-primary md:hover:bg-show-seExtranaALaNona-primaryHover`,
-                                        show === "generacion-dorada" && `focus-visible:outline-show-generacionDorada-primary md:hover:bg-show-generacionDorada-primaryHover`,
-                                        show === "cuando-eric-conocio-a-milton" && `focus-visible:outline-show-cuandoEricConocioAMilton-primary md:hover:bg-show-cuandoEricConocioAMilton-primaryHover`,
-                                        show === "mi-primo-es-asi" && `focus-visible:outline-show-miPrimoEsAsi-primary md:hover:bg-show-miPrimoEsAsi-primaryHover`,
-                                      ])}
-                                      target="_blank"
-                                      href={
-                                        `https://www.youtube.com/watch?v=${hash}`
-                                        + `&t=${getSeconds(start)}`
-                                      }
-                                    >
-                                      <span
-                                        className={clsx([
-                                          "mabry",
-                                          show === "seria-increible" && `text-show-seriaIncreible-primary`,
-                                          show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
-                                          show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
-                                          show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
-                                          show === "generacion-dorada" && `text-show-generacionDorada-primary`,
-                                          show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
-                                          show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
-                                        ])}
-                                      >
-                                        {label}
-                                      </span>
-                                      <span
-                                        className={clsx([
-                                          "mabry",
-                                          show === "seria-increible" && `text-show-seriaIncreible-primary`,
-                                          show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
-                                          show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
-                                          show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
-                                          show === "generacion-dorada" && `text-show-generacionDorada-primary`,
-                                          show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
-                                          show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
-                                        ])}
-                                      >
-                                        {start}
-                                      </span>
-                                    </a>
-                                    <fetcher.Form
-                                      action="/upvote/add"
-                                      method="POST"
-                                      className="flex"
-                                    >
-                                      <span className="sr-only">
-                                        {isUpvoted
-                                          ? "Quitar voto de este corte"
-                                          : "Votar este corte para el ranking"}
-                                      </span>
-                                      <input
-                                        type="hidden"
-                                        name="isUpvoted"
-                                        value={isUpvoted ? "true" : "false"}
-                                      />
-                                      <input
-                                        type="hidden"
-                                        name="cutId"
-                                        value={id}
-                                      />
-                                      <input
-                                        type="hidden"
-                                        name="userId"
-                                        value={userId}
-                                      />
-                                      <button
-                                        type="submit"
-                                        className={clsx([
-                                          "outline-4 focus-visible:outline",
-                                          show === "seria-increible" && `outline-show-seriaIncreible-primary`,
-                                          show === "sone-que-volaba" && `outline-show-soneQueVolaba-primary`,
-                                          show === "paraiso-fiscal" && `outline-show-paraisoFiscal-primary`,
-                                          show === "se-extrana-a-la-nona" && `outline-show-seExtranaALaNona-primary`,
-                                          show === "generacion-dorada" && `outline-show-generacionDorada-primary`,
-                                          show === "cuando-eric-conocio-a-milton" && `outline-show-cuandoEricConocioAMilton-primary`,
-                                          show === "mi-primo-es-asi" && `outline-show-miPrimoEsAsi-primary`,
-                                        ])}
-                                        aria-label={
-                                          isUpvoted
-                                            ? "Quitar voto de este corte"
-                                            : "Votar este corte para el ranking"
-                                        }
-                                        aria-pressed={isUpvoted}
-                                      >
-                                        <HeartIcon
-                                          className={clsx([
-                                            "h-6 w-7",
-                                            isUpvoted && show === "seria-increible" && `fill-show-seriaIncreible-primaryHover text-show-seriaIncreible-primary`,
-                                            isUpvoted && show === "sone-que-volaba" && `fill-show-soneQueVolaba-primaryHover text-show-soneQueVolaba-primary`,
-                                            isUpvoted && show === "paraiso-fiscal" && `fill-show-paraisoFiscal-primaryHover text-show-paraisoFiscal-primary`,
-                                            isUpvoted && show === "se-extrana-a-la-nona" && `fill-show-seExtranaALaNona-primaryHover text-show-seExtranaALaNona-primary`,
-                                            isUpvoted && show === "generacion-dorada" && `fill-show-generacionDorada-primaryHover text-show-generacionDorada-primary`,
-                                            isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-show-cuandoEricConocioAMilton-primaryHover text-show-cuandoEricConocioAMilton-primary`,
-                                            isUpvoted && show === "mi-primo-es-asi" && `fill-show-miPrimoEsAsi-primaryHover text-show-miPrimoEsAsi-primary`,
-                                            !isUpvoted && show === "seria-increible" && `fill-transparent text-show-seriaIncreible-primaryHover`,
-                                            !isUpvoted && show === "sone-que-volaba" && `fill-transparent text-show-soneQueVolaba-primaryHover`,
-                                            !isUpvoted && show === "paraiso-fiscal" && `fill-transparent text-show-paraisoFiscal-primaryHover`,
-                                            !isUpvoted && show === "se-extrana-a-la-nona" && `fill-transparent text-show-seExtranaALaNona-primaryHover`,
-                                            !isUpvoted && show === "generacion-dorada" && `fill-transparent text-show-generacionDorada-primaryHover`,
-                                            !isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-transparent text-show-cuandoEricConocioAMilton-primaryHover`,
-                                            !isUpvoted && show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`,
-                                          ])}
-                                        />
-                                      </button>
-                                    </fetcher.Form>
-                                  </li>
+                                  <Heart
+                                    id={id}
+                                    hash={hash}
+                                    isUpvoted={isUpvoted}
+                                    start={start}
+                                    label={label}
+                                    userId={userId}
+                                    show={show}
+                                  />
                                 )
                               })}
                           </ul>
@@ -332,3 +223,147 @@ export default function() {
   )
 }
 
+function Heart({
+  show,
+  hash,
+  start,
+  label,
+  isUpvoted,
+  userId,
+  id
+}: {
+  show: Show,
+  hash: string,
+  start: string,
+  label: string,
+  isUpvoted: boolean,
+  userId: string | undefined,
+  id: number
+}) {
+  const fetcher = useFetcher()
+  const isRequesting = fetcher.state === 'submitting' || fetcher.state === 'loading'
+  console.log("isRequesting", isRequesting)
+
+  return (
+    <li
+      key={`cut-${show}-${hash}-${getSeconds(start)}-${id}`}
+      className="flex items-start space-x-2 py-0.5"
+    >
+      <a
+        className={clsx([
+          "flex w-full items-start justify-between space-x-2 px-0.5 font-medium md:hover:cursor-pointer",
+          `outline-4 focus-visible:outline  `,
+          show === "seria-increible" && `focus-visible:outline-show-seriaIncreible-primary md:hover:bg-show-seriaIncreible-primaryHover`,
+          show === "sone-que-volaba" && `focus-visible:outline-show-soneQueVolaba-primary md:hover:bg-show-soneQueVolaba-primaryHover`,
+          show === "paraiso-fiscal" && `focus-visible:outline-show-paraisoFiscal-primary md:hover:bg-show-paraisoFiscal-primaryHover`,
+          show === "se-extrana-a-la-nona" && `focus-visible:outline-show-seExtranaALaNona-primary md:hover:bg-show-seExtranaALaNona-primaryHover`,
+          show === "generacion-dorada" && `focus-visible:outline-show-generacionDorada-primary md:hover:bg-show-generacionDorada-primaryHover`,
+          show === "cuando-eric-conocio-a-milton" && `focus-visible:outline-show-cuandoEricConocioAMilton-primary md:hover:bg-show-cuandoEricConocioAMilton-primaryHover`,
+          show === "mi-primo-es-asi" && `focus-visible:outline-show-miPrimoEsAsi-primary md:hover:bg-show-miPrimoEsAsi-primaryHover`,
+        ])}
+        target="_blank"
+        href={
+          `https://www.youtube.com/watch?v=${hash}`
+          + `&t=${getSeconds(start)}`
+        }
+      >
+        <span
+          className={clsx([
+            "mabry",
+            show === "seria-increible" && `text-show-seriaIncreible-primary`,
+            show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
+            show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
+            show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
+            show === "generacion-dorada" && `text-show-generacionDorada-primary`,
+            show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
+            show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
+          ])}
+        >
+          {label}
+        </span>
+        <span
+          className={clsx([
+            "mabry",
+            show === "seria-increible" && `text-show-seriaIncreible-primary`,
+            show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
+            show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
+            show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
+            show === "generacion-dorada" && `text-show-generacionDorada-primary`,
+            show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
+            show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
+          ])}
+        >
+          {start}
+        </span>
+      </a>
+      <fetcher.Form
+        action="/upvote/add"
+        method="POST"
+        className="flex"
+      >
+        <span className="sr-only">
+          {isUpvoted
+            ? "Quitar voto de este corte"
+            : "Votar este corte para el ranking"}
+        </span>
+        <input
+          type="hidden"
+          name="isUpvoted"
+          value={isUpvoted ? "true" : "false"}
+        />
+        <input
+          type="hidden"
+          name="cutId"
+          value={id}
+        />
+        <input
+          type="hidden"
+          name="userId"
+          value={userId}
+        />
+        <button
+          type="submit"
+          disabled={isRequesting}
+          className={clsx([
+            "outline-4 focus-visible:outline disabled:cursor-wait",
+            show === "seria-increible" && `outline-show-seriaIncreible-primary`,
+            show === "sone-que-volaba" && `outline-show-soneQueVolaba-primary`,
+            show === "paraiso-fiscal" && `outline-show-paraisoFiscal-primary`,
+            show === "se-extrana-a-la-nona" && `outline-show-seExtranaALaNona-primary`,
+            show === "generacion-dorada" && `outline-show-generacionDorada-primary`,
+            show === "cuando-eric-conocio-a-milton" && `outline-show-cuandoEricConocioAMilton-primary`,
+            show === "mi-primo-es-asi" && `outline-show-miPrimoEsAsi-primary`,
+          ])}
+          aria-label={
+            isUpvoted
+              ? "Quitar voto de este corte"
+              : "Votar este corte para el ranking"
+          }
+          aria-pressed={isUpvoted}
+        >
+          <HeartIcon
+            className={clsx([
+              "h-6 w-7",
+              isUpvoted && show === "seria-increible" && `fill-show-seriaIncreible-primaryHover text-show-seriaIncreible-primary`,
+              isUpvoted && show === "sone-que-volaba" && `fill-show-soneQueVolaba-primaryHover text-show-soneQueVolaba-primary`,
+              isUpvoted && show === "paraiso-fiscal" && `fill-show-paraisoFiscal-primaryHover text-show-paraisoFiscal-primary`,
+              isUpvoted && show === "se-extrana-a-la-nona" && `fill-show-seExtranaALaNona-primaryHover text-show-seExtranaALaNona-primary`,
+              isUpvoted && show === "generacion-dorada" && `fill-show-generacionDorada-primaryHover text-show-generacionDorada-primary`,
+              isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-show-cuandoEricConocioAMilton-primaryHover text-show-cuandoEricConocioAMilton-primary`,
+              isUpvoted && show === "mi-primo-es-asi" && `fill-show-miPrimoEsAsi-primaryHover text-show-miPrimoEsAsi-primary`,
+              !isUpvoted && show === "seria-increible" && `fill-transparent text-show-seriaIncreible-primaryHover`,
+              !isUpvoted && show === "sone-que-volaba" && `fill-transparent text-show-soneQueVolaba-primaryHover`,
+              !isUpvoted && show === "paraiso-fiscal" && `fill-transparent text-show-paraisoFiscal-primaryHover`,
+              !isUpvoted && show === "se-extrana-a-la-nona" && `fill-transparent text-show-seExtranaALaNona-primaryHover`,
+              !isUpvoted && show === "generacion-dorada" && `fill-transparent text-show-generacionDorada-primaryHover`,
+              !isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-transparent text-show-cuandoEricConocioAMilton-primaryHover`,
+              !isUpvoted && show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`,
+              isUpvoted && isRequesting && "fill-gray-200 text-gray-400",
+              !isUpvoted && isRequesting && "text-gray-300"
+            ])}
+          />
+        </button>
+      </fetcher.Form>
+    </li>
+  )
+}
