@@ -8,8 +8,8 @@ pages_build_output_dir = "build/client"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "olga-db"
-database_id = "a51efe05-83e7-4df0-96c2-8fc06d94c66c"
+database_name = "olga-production"
+database_id = "d9217430-2e70-4b04-94b5-01f1412e519c"
 
 [[r2_buckets]]
 binding = "SOUNDS"
