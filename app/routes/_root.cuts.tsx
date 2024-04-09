@@ -12,6 +12,7 @@ import * as v from "valibot"
 import { error } from "~/utils/http"
 import { Form, useFetcher, useLoaderData } from "@remix-run/react"
 import { useState } from "react"
+import { UpvotesSchema } from "~/routes/upvote.get.$userId"
 
 const cutsByDaySchema = v.array(
   v.tuple([
@@ -32,14 +33,26 @@ export async function loader({
   const searchParams = new URLSearchParams(url.search)
   const query = searchParams.get("query")
   const { user } = await validateSession(request, context)
-  const upvotes = user ? await (await fetch(`${url.origin}/upvote/get/${user.id}`)).json() : []
-  const raws = await (await fetch(`${url.origin}/cut/get/all`)).json()
 
-  const result = v.safeParse(CutsSchema, raws)
-  if (!result.success) {
-    throw error(400, result.issues[0].message)
+  const cutsResult = v.safeParse(
+    CutsSchema,
+    await (await fetch(`${url.origin}/cut/get/all`)).json()
+  )
+  if (!cutsResult.success) {
+    throw error(400, cutsResult.issues[0].message)
   }
-  const cuts = result.output
+  const cuts = cutsResult.output
+
+  const upvotesResult = v.safeParse(
+    UpvotesSchema,
+    user
+      ? await (await fetch(`${url.origin}/upvote/get/${user.id}`)).json()
+      : []
+  )
+  if (!upvotesResult.success) {
+    throw error(400, upvotesResult.issues[0].message)
+  }
+  const upvotes = upvotesResult.output
 
   const cutsByDay = Object.entries(
     cuts
@@ -179,10 +192,9 @@ export default function() {
                                 return {
                                   ...cut,
                                   isUpvoted:
-                                    upvotes.length > 0
-                                      ? upvotes.some(({ cut_id }) => {
-                                        return cut_id === cut.id
-                                      }) : false,
+                                    upvotes.some(({ cut_id }) => {
+                                      return cut_id === cut.id
+                                    })
                                 }
                               })
                               .map(({ label, start, hash, id, isUpvoted }) => {

@@ -6,9 +6,9 @@ import {
   ScrollRestoration,
 } from "@remix-run/react"
 import { LinksFunction } from "@remix-run/cloudflare";
-import tailwindStyles from "~/styles/tailwind.css?url";
 import a11yStyles from "~/styles/a11y.css?url";
 import globalStyles from "~/styles/global.css?url";
+import tailwindStyles from "~/styles/tailwind.css?url";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: a11yStyles },

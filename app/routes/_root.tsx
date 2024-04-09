@@ -25,49 +25,6 @@ export default function() {
   const location = useLocation()
   const fetcher = useFetcher()
 
-  useEffect(() => {
-    if (!rankingRef.current) {
-      return
-    }
-
-    if (location.pathname === "/ranking/") {
-      rankingRef.current.blur()
-    }
-  }, [location.pathname])
-
-  useEffect(() => {
-    if (!logoRef.current) {
-      return
-    }
-
-    if (location.pathname === "/") {
-      logoRef.current.blur()
-    }
-  })
-
-  useEffect(() => {
-    if (!cutsRef.current) {
-      return
-    }
-
-    if (location.pathname === "/cuts/") {
-      cutsRef.current.blur()
-    }
-  })
-
-  useEffect(() => {
-    if (!loginRef.current) {
-      return
-    }
-
-    if ([
-      "/login/",
-      "/join/"
-    ].includes(location.pathname)) {
-      loginRef.current.blur()
-    }
-  })
-
   return (
     <>
       <header
@@ -186,7 +143,7 @@ export default function() {
               )}
           </ul>
         </nav>
-        <nav className="pointer-events-auto">
+        <nav className="pointer-events-auto md:hidden">
           <ul className="flex items-center space-x-2">
             {userId
               ? (
