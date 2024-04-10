@@ -11,7 +11,7 @@ import { LoaderFunctionArgs, defer } from "@remix-run/cloudflare"
 import * as v from "valibot"
 import { error } from "~/utils/http"
 import { Await, Form, useFetcher, useLoaderData } from "@remix-run/react"
-import { Suspense, useState } from "react"
+import { ReactNode, Suspense, useState } from "react"
 import { UpvotesSchema } from "~/routes/upvote.get.$userId"
 
 const cutsByDaySchema = v.array(
@@ -185,7 +185,7 @@ export default function() {
                                 <Suspense
                                   key={`cut-${show}-${hash}-${getSeconds(start)}-${id}`}
                                   fallback={
-                                    <HeartSkeleton
+                                    <HeartFallback
                                       id={id}
                                       hash={hash}
                                       start={start}
@@ -260,53 +260,10 @@ function Heart({
 
   return (
     <li className="flex items-start space-x-2 py-0.5">
-      <a
-        className={clsx([
-          "flex w-full items-start justify-between space-x-2 px-0.5 font-medium md:hover:cursor-pointer",
-          `outline-4 focus-visible:outline`,
-          show === "seria-increible" && `focus-visible:outline-show-seriaIncreible-primary md:hover:bg-show-seriaIncreible-primaryHover`,
-          show === "sone-que-volaba" && `focus-visible:outline-show-soneQueVolaba-primary md:hover:bg-show-soneQueVolaba-primaryHover`,
-          show === "paraiso-fiscal" && `focus-visible:outline-show-paraisoFiscal-primary md:hover:bg-show-paraisoFiscal-primaryHover`,
-          show === "se-extrana-a-la-nona" && `focus-visible:outline-show-seExtranaALaNona-primary md:hover:bg-show-seExtranaALaNona-primaryHover`,
-          show === "generacion-dorada" && `focus-visible:outline-show-generacionDorada-primary md:hover:bg-show-generacionDorada-primaryHover`,
-          show === "cuando-eric-conocio-a-milton" && `focus-visible:outline-show-cuandoEricConocioAMilton-primary md:hover:bg-show-cuandoEricConocioAMilton-primaryHover`,
-          show === "mi-primo-es-asi" && `focus-visible:outline-show-miPrimoEsAsi-primary md:hover:bg-show-miPrimoEsAsi-primaryHover`,
-        ])}
-        target="_blank"
-        href={
-          `https://www.youtube.com/watch?v=${hash}`
-          + `&t=${getSeconds(start)}`
-        }
-      >
-        <span
-          className={clsx([
-            "mabry",
-            show === "seria-increible" && `text-show-seriaIncreible-primary`,
-            show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
-            show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
-            show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
-            show === "generacion-dorada" && `text-show-generacionDorada-primary`,
-            show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
-            show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
-          ])}
-        >
-          {label}
-        </span>
-        <span
-          className={clsx([
-            "mabry",
-            show === "seria-increible" && `text-show-seriaIncreible-primary`,
-            show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
-            show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
-            show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
-            show === "generacion-dorada" && `text-show-generacionDorada-primary`,
-            show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
-            show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
-          ])}
-        >
-          {start}
-        </span>
-      </a>
+      <HeartLink start={start} show={show} hash={hash}>
+        <HeartLabel show={show} label={label} />
+        <HeartStart start={start} show={show} />
+      </HeartLink>
       <fetcher.Form
         action="/upvote/add"
         method="POST"
@@ -352,8 +309,6 @@ function Heart({
           }
           aria-pressed={isUpvoted}
         >
-
-          {}
           {isRequesting ? (
             <HeartIcon className='h-6 w-7 fill-gray-300 text-gray-500' />
           ) : (
@@ -383,7 +338,7 @@ function Heart({
   )
 }
 
-function HeartSkeleton({
+function HeartFallback({
   show,
   hash,
   start,
@@ -401,53 +356,10 @@ function HeartSkeleton({
 ) {
   return (
     <li className="flex items-start space-x-2 py-0.5">
-      <a
-        className={clsx([
-          "flex w-full items-start justify-between space-x-2 px-0.5 font-medium md:hover:cursor-pointer",
-          `outline-4 focus-visible:outline`,
-          show === "seria-increible" && `focus-visible:outline-show-seriaIncreible-primary md:hover:bg-show-seriaIncreible-primaryHover`,
-          show === "sone-que-volaba" && `focus-visible:outline-show-soneQueVolaba-primary md:hover:bg-show-soneQueVolaba-primaryHover`,
-          show === "paraiso-fiscal" && `focus-visible:outline-show-paraisoFiscal-primary md:hover:bg-show-paraisoFiscal-primaryHover`,
-          show === "se-extrana-a-la-nona" && `focus-visible:outline-show-seExtranaALaNona-primary md:hover:bg-show-seExtranaALaNona-primaryHover`,
-          show === "generacion-dorada" && `focus-visible:outline-show-generacionDorada-primary md:hover:bg-show-generacionDorada-primaryHover`,
-          show === "cuando-eric-conocio-a-milton" && `focus-visible:outline-show-cuandoEricConocioAMilton-primary md:hover:bg-show-cuandoEricConocioAMilton-primaryHover`,
-          show === "mi-primo-es-asi" && `focus-visible:outline-show-miPrimoEsAsi-primary md:hover:bg-show-miPrimoEsAsi-primaryHover`,
-        ])}
-        target="_blank"
-        href={
-          `https://www.youtube.com/watch?v=${hash}`
-          + `&t=${getSeconds(start)}`
-        }
-      >
-        <span
-          className={clsx([
-            "mabry",
-            show === "seria-increible" && `text-show-seriaIncreible-primary`,
-            show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
-            show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
-            show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
-            show === "generacion-dorada" && `text-show-generacionDorada-primary`,
-            show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
-            show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
-          ])}
-        >
-          {label}
-        </span>
-        <span
-          className={clsx([
-            "mabry",
-            show === "seria-increible" && `text-show-seriaIncreible-primary`,
-            show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
-            show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
-            show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
-            show === "generacion-dorada" && `text-show-generacionDorada-primary`,
-            show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
-            show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
-          ])}
-        >
-          {start}
-        </span>
-      </a>
+      <HeartLink start={start} show={show} hash={hash}>
+        <HeartLabel show={show} label={label} />
+        <HeartStart start={start} show={show} />
+      </HeartLink>
       <Form
         action="/upvote/add"
         method="POST"
@@ -502,5 +414,93 @@ function HeartSkeleton({
         </button>
       </Form>
     </li>
+  )
+}
+
+function HeartStart({
+  show,
+  start,
+}: {
+  show: Show,
+  start: string,
+}) {
+  return (
+    <span
+      className={clsx([
+        "mabry",
+        show === "seria-increible" && `text-show-seriaIncreible-primary`,
+        show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
+        show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
+        show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
+        show === "generacion-dorada" && `text-show-generacionDorada-primary`,
+        show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
+        show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
+      ])}
+    >
+      {start}
+    </span>
+  )
+}
+
+function HeartLabel({
+  show,
+  label,
+}: {
+  show: Show,
+  label: string,
+}) {
+  return (
+
+    <span
+      className={clsx([
+        "mabry",
+        show === "seria-increible" && `text-show-seriaIncreible-primary`,
+        show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
+        show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
+        show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
+        show === "generacion-dorada" && `text-show-generacionDorada-primary`,
+        show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
+        show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
+      ])}
+    >
+      {label}
+    </span>
+  )
+}
+
+function HeartLink(
+  {
+    show,
+    hash,
+    start,
+    children
+  }: {
+    show: Show,
+    hash: string,
+    start: string,
+    children?: ReactNode
+  }
+) {
+  return (
+    <a
+      className={clsx([
+        "flex w-full items-start justify-between space-x-2 px-0.5 font-medium md:hover:cursor-pointer",
+        `outline-4 focus-visible:outline`,
+        show === "seria-increible" && `focus-visible:outline-show-seriaIncreible-primary md:hover:bg-show-seriaIncreible-primaryHover`,
+        show === "sone-que-volaba" && `focus-visible:outline-show-soneQueVolaba-primary md:hover:bg-show-soneQueVolaba-primaryHover`,
+        show === "paraiso-fiscal" && `focus-visible:outline-show-paraisoFiscal-primary md:hover:bg-show-paraisoFiscal-primaryHover`,
+        show === "se-extrana-a-la-nona" && `focus-visible:outline-show-seExtranaALaNona-primary md:hover:bg-show-seExtranaALaNona-primaryHover`,
+        show === "generacion-dorada" && `focus-visible:outline-show-generacionDorada-primary md:hover:bg-show-generacionDorada-primaryHover`,
+        show === "cuando-eric-conocio-a-milton" && `focus-visible:outline-show-cuandoEricConocioAMilton-primary md:hover:bg-show-cuandoEricConocioAMilton-primaryHover`,
+        show === "mi-primo-es-asi" && `focus-visible:outline-show-miPrimoEsAsi-primary md:hover:bg-show-miPrimoEsAsi-primaryHover`,
+      ])}
+      target="_blank"
+      href={
+        `https://www.youtube.com/watch?v=${hash}`
+        + `&t=${getSeconds(start)}`
+      }
+    >
+      {children}
+    </a>
   )
 }
