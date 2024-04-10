@@ -12,3 +12,5 @@ start="$3"
 end="$4"
 
 ffmpeg -i "$input" -ss "$start" -to "$end" -c copy "$output"
+
+rm "$input"
