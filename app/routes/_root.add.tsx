@@ -1,8 +1,8 @@
 import { useFetcher } from "@remix-run/react"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
-
-
+import * as v from "valibot"
+import { ResponseSchema } from "./cut.add"
 
 export default function() {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -15,6 +15,10 @@ export default function() {
 
     inputRef.current.focus()
   })
+
+  const actionData = fetcher.data
+    ? v.parse(ResponseSchema, fetcher.data)
+    : undefined
 
   return (
     <section className="flex h-full flex-1 flex-col items-center justify-center space-y-2">
@@ -34,17 +38,17 @@ export default function() {
             ref={inputRef}
             id="day"
             name="day"
-            // aria-invalid={addCuts.value?.error ? "true" : undefined}
+            aria-invalid={actionData?.error !== undefined}
             aria-errormessage="day-error"
           />
           <span
             id="day-error"
             className={clsx([
               "mabry text-brand-red underline decoration-brand-blue decoration-dotted decoration-2 underline-offset-1",
-              // addCuts.value?.error ? "visible" : "invisible",
+              actionData?.error ? "visible" : "invisible",
             ])}
           >
-            {/*{addCuts.value?.error ?? "Olga"}*/}
+            {actionData?.error}
           </span>
         </p>
         <p className="flex flex-col space-y-1">
@@ -73,24 +77,21 @@ export default function() {
         </p>
         <button
           type="submit"
-          className="mabry w-full border-2 border-brand-red bg-brand-red px-4 py-2 text-2xl text-brand-red outline-4 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-stone md:hover:text-brand-red"
+          className="mabry w-full border-2 text-brand-stone border-brand-red bg-brand-red px-4 py-2 text-2xl text-brand-red outline-4 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-stone md:hover:text-brand-red"
         >
           Agregar
         </button>
-        {/*
-        {addCuts.value
-          && addCuts.value.success === true
-          && addCuts.value.addedVideos
-          && addCuts.value.addedVideos.length > 0
+        {actionData?.error !== undefined
+          && actionData.addedVideos
+          && actionData.addedVideos.length > 0
           ? (
             <ul>
-              {addCuts.value.addedVideos.map(({ title }) => (
+              {actionData.addedVideos.map(({ title }) => (
                 <li key={`video_${title}`}>{title}</li>
               ))}
             </ul>
           )
           : null}
-          */}
       </fetcher.Form>
     </section>
   )

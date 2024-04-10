@@ -1,6 +1,6 @@
 import { ActionFunctionArgs, redirect } from "@remix-run/cloudflare"
 import * as v from "valibot"
-import { error, fail } from "~/utils/http"
+import { error } from "~/utils/http"
 
 const ValuesSchema = v.object({
   cutId: v.string(),
@@ -20,10 +20,10 @@ export async function action({ request }: ActionFunctionArgs) {
     userId: formData.get("userId"),
   })
   if (!valuesResult.success) {
-    return fail(400, {
+    return error(400, JSON.stringify({
       success: false,
       error: valuesResult.issues[0].message
-    })
+    }))
   }
   const { cutId, userId, isUpvoted } = valuesResult.output
 

@@ -1,21 +1,20 @@
 export function error(
   status: number,
-  message: string
+  message: string | Record<string, unknown>,
+  init?: ResponseInit
 ) {
-  return new Response(message, {
-    status
-  })
-}
-
-export function fail(
-  status: number,
-  json: Record<string, any>
-) {
-  return new Response(json as BodyInit, {
-    status,
-    headers: {
-      "Content-Type": "application/json",
+  return new Response(
+    typeof message === 'string' ? message : JSON.stringify(message),
+    {
+      ...(init ? init : {}),
+      status,
+      headers: {
+        ...(init?.headers ? init.headers : {}),
+        ...(typeof message !== 'string'
+          ? { "Content-Type": "application/json" }
+          : {}
+        ),
+      },
     }
-  })
+  )
 }
-

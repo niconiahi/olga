@@ -149,9 +149,8 @@ export default function() {
       <section className="mt-2 flex">
         <ul className="w-full grow space-y-2">
           {cutsByDay
-            .slice(0, 1)
             .reverse()
-            .map(([date, cuts], index) => {
+            .map(([date, cutsByDay], index) => {
               return (
                 <li key={`date-${date.toISOString()}`} className="space-y-2">
                   <h4
@@ -163,7 +162,7 @@ export default function() {
                     {`${getDay(date)}/${getMonth(date)}`}
                   </h4>
                   <ul className="space-y-3">
-                    {cuts.map(([show, cuts]) => {
+                    {cutsByDay.map(([show, cuts]) => {
                       return (
                         <li
                           key={`show-${date.toISOString()}-${show}`}

@@ -11,6 +11,17 @@ const ValuesSchema = v.object({
   year: v.coerce(v.number(), (input) => Number(input as string)),
 })
 
+const VideoSchema = v.object({
+  hash: v.string(),
+  title: v.string(),
+  id: v.number()
+})
+const VideosSchema = v.array(VideoSchema)
+export const ResponseSchema = v.object({
+  addedVideos: VideosSchema,
+  error: v.union([v.null_(), v.string()])
+})
+
 export async function action({
   request,
   context
@@ -22,19 +33,37 @@ export async function action({
     year: formData.get("year"),
   })
   if (!valuesResult.success) {
-    throw error(400, valuesResult.issues[0].message)
+    return error(
+      400,
+      {
+        error: valuesResult.issues[0].message,
+        addedVideos: []
+      }
+    )
   }
   const { day, month, year } = valuesResult.output
 
   const queryBuilder = getQueryBuilder(context)
   const result = await getVideos(day, month)
   if (!result.success) {
-    return error(400, result.issues[0].message)
+    return error(
+      400,
+      {
+        error: result.issues[0].message,
+        addedVideos: []
+      }
+    )
   }
 
   const nextVideos = result.output
   if (nextVideos.length === 0) {
-    return error(409, "No se encontraron videos en este dia")
+    return error(
+      409,
+      {
+        error: "No se encontraron videos en este dia",
+        addedVideos: []
+      }
+    )
   }
 
   const prevVideos = await queryBuilder
@@ -47,7 +76,13 @@ export async function action({
     ({ hash }) => !prevVideos.some(prevVideo => prevVideo.hash === hash),
   )
   if (videos.length === 0) {
-    return error(409, "Los videos de este dia ya fueron agregados")
+    return error(
+      409,
+      {
+        error: "Los videos de este dia ya fueron agregados",
+        addedVideos: []
+      }
+    )
   }
 
   await queryBuilder
@@ -72,7 +107,10 @@ export async function action({
   for (const { hash, id } of addedVideos) {
     const result = await getCuts(hash, id)
     if (!result.success) {
-      return error(400, result.issues[0].message)
+      return error(
+        400,
+        result.issues[0].message
+      )
     }
 
     const cuts = dedupe(result.output)
@@ -93,5 +131,5 @@ export async function action({
     }
   }
 
-  return json({ success: true, addedVideos })
+  return json({ error: null, addedVideos })
 }
