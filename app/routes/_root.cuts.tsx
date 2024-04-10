@@ -10,8 +10,8 @@ import { ShowIcon } from "~/components/icons/show-icon"
 import { LoaderFunctionArgs, defer } from "@remix-run/cloudflare"
 import * as v from "valibot"
 import { error } from "~/utils/http"
-import { Form, useFetcher, useLoaderData } from "@remix-run/react"
-import { useState } from "react"
+import { Await, Form, useFetcher, useLoaderData } from "@remix-run/react"
+import { Suspense, useState } from "react"
 import { UpvotesSchema } from "~/routes/upvote.get.$userId"
 
 const cutsByDaySchema = v.array(
@@ -34,6 +34,11 @@ export async function loader({
   const query = searchParams.get("query")
   const { user } = await validateSession(request, context)
 
+  const upvotes =
+    user
+      ? fetch(`${url.origin}/upvote/get/${user.id}`).then((raw) => raw.json())
+      : new Promise((resolve) => resolve([]))
+
   const cutsResult = v.safeParse(
     CutsSchema,
     await (await fetch(`${url.origin}/cut/get/all`)).json()
@@ -42,17 +47,6 @@ export async function loader({
     throw error(400, cutsResult.issues[0].message)
   }
   const cuts = cutsResult.output
-
-  const upvotesResult = v.safeParse(
-    UpvotesSchema,
-    user
-      ? await (await fetch(`${url.origin}/upvote/get/${user.id}`)).json()
-      : []
-  )
-  if (!upvotesResult.success) {
-    throw error(400, upvotesResult.issues[0].message)
-  }
-  const upvotes = upvotesResult.output
 
   const cutsByDay = Object.entries(
     cuts
@@ -188,18 +182,46 @@ export default function() {
                           <ul>
                             {cuts.map(({ label, start, hash, id }) => {
                               return (
-                                <Heart
+                                <Suspense
                                   key={`cut-${show}-${hash}-${getSeconds(start)}-${id}`}
-                                  id={id}
-                                  hash={hash}
-                                  isUpvoted={upvotes.some(({ cut_id }) => {
-                                    return cut_id === id
-                                  })}
-                                  start={start}
-                                  label={label}
-                                  userId={userId}
-                                  show={show}
-                                />
+                                  fallback={
+                                    <HeartSkeleton
+                                      id={id}
+                                      hash={hash}
+                                      start={start}
+                                      label={label}
+                                      userId={userId}
+                                      show={show}
+                                    />
+                                  }
+                                >
+                                  <Await resolve={upvotes}>
+                                    {(_upvotes) => {
+                                      const upvotesResult = v.safeParse(
+                                        UpvotesSchema,
+                                        _upvotes
+                                      )
+                                      if (!upvotesResult.success) {
+                                        throw error(400, upvotesResult.issues[0].message)
+                                      }
+                                      const upvotes = upvotesResult.output
+
+                                      return (
+                                        <Heart
+                                          id={id}
+                                          hash={hash}
+                                          isUpvoted={upvotes.some(({ cut_id }) => {
+                                            return cut_id === id
+                                          })}
+                                          start={start}
+                                          label={label}
+                                          userId={userId}
+                                          show={show}
+                                        />
+                                      )
+                                    }}
+                                  </Await>
+                                </Suspense>
                               )
                             })}
                           </ul>
@@ -330,6 +352,8 @@ function Heart({
           }
           aria-pressed={isUpvoted}
         >
+
+          {}
           {isRequesting ? (
             <HeartIcon className='h-6 w-7 fill-gray-300 text-gray-500' />
           ) : (
@@ -355,6 +379,128 @@ function Heart({
           )}
         </button>
       </fetcher.Form>
+    </li>
+  )
+}
+
+function HeartSkeleton({
+  show,
+  hash,
+  start,
+  label,
+  userId,
+  id
+}: {
+  show: Show,
+  hash: string,
+  start: string,
+  label: string,
+  userId: string | undefined,
+  id: number
+}
+) {
+  return (
+    <li className="flex items-start space-x-2 py-0.5">
+      <a
+        className={clsx([
+          "flex w-full items-start justify-between space-x-2 px-0.5 font-medium md:hover:cursor-pointer",
+          `outline-4 focus-visible:outline`,
+          show === "seria-increible" && `focus-visible:outline-show-seriaIncreible-primary md:hover:bg-show-seriaIncreible-primaryHover`,
+          show === "sone-que-volaba" && `focus-visible:outline-show-soneQueVolaba-primary md:hover:bg-show-soneQueVolaba-primaryHover`,
+          show === "paraiso-fiscal" && `focus-visible:outline-show-paraisoFiscal-primary md:hover:bg-show-paraisoFiscal-primaryHover`,
+          show === "se-extrana-a-la-nona" && `focus-visible:outline-show-seExtranaALaNona-primary md:hover:bg-show-seExtranaALaNona-primaryHover`,
+          show === "generacion-dorada" && `focus-visible:outline-show-generacionDorada-primary md:hover:bg-show-generacionDorada-primaryHover`,
+          show === "cuando-eric-conocio-a-milton" && `focus-visible:outline-show-cuandoEricConocioAMilton-primary md:hover:bg-show-cuandoEricConocioAMilton-primaryHover`,
+          show === "mi-primo-es-asi" && `focus-visible:outline-show-miPrimoEsAsi-primary md:hover:bg-show-miPrimoEsAsi-primaryHover`,
+        ])}
+        target="_blank"
+        href={
+          `https://www.youtube.com/watch?v=${hash}`
+          + `&t=${getSeconds(start)}`
+        }
+      >
+        <span
+          className={clsx([
+            "mabry",
+            show === "seria-increible" && `text-show-seriaIncreible-primary`,
+            show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
+            show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
+            show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
+            show === "generacion-dorada" && `text-show-generacionDorada-primary`,
+            show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
+            show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
+          ])}
+        >
+          {label}
+        </span>
+        <span
+          className={clsx([
+            "mabry",
+            show === "seria-increible" && `text-show-seriaIncreible-primary`,
+            show === "sone-que-volaba" && `text-show-soneQueVolaba-primary`,
+            show === "paraiso-fiscal" && `text-show-paraisoFiscal-primary`,
+            show === "se-extrana-a-la-nona" && `text-show-seExtranaALaNona-primary`,
+            show === "generacion-dorada" && `text-show-generacionDorada-primary`,
+            show === "cuando-eric-conocio-a-milton" && `text-show-cuandoEricConocioAMilton-primary`,
+            show === "mi-primo-es-asi" && `text-show-miPrimoEsAsi-primary `,
+          ])}
+        >
+          {start}
+        </span>
+      </a>
+      <Form
+        action="/upvote/add"
+        method="POST"
+        className="flex"
+      >
+        <span className="sr-only">
+          Votar este corte para el ranking
+        </span>
+        <input
+          type="hidden"
+          name="isUpvoted"
+          value="false"
+        />
+        <input
+          type="hidden"
+          name="cutId"
+          value={id}
+        />
+        <input
+          type="hidden"
+          name="userId"
+          value={userId}
+        />
+        <button
+          type="submit"
+          disabled={true}
+          className={clsx([
+            "outline-4 focus-visible:outline disabled:cursor-wait",
+            show === "seria-increible" && `outline-show-seriaIncreible-primary`,
+            show === "sone-que-volaba" && `outline-show-soneQueVolaba-primary`,
+            show === "paraiso-fiscal" && `outline-show-paraisoFiscal-primary`,
+            show === "se-extrana-a-la-nona" && `outline-show-seExtranaALaNona-primary`,
+            show === "generacion-dorada" && `outline-show-generacionDorada-primary`,
+            show === "cuando-eric-conocio-a-milton" && `outline-show-cuandoEricConocioAMilton-primary`,
+            show === "mi-primo-es-asi" && `outline-show-miPrimoEsAsi-primary`,
+          ])}
+          aria-label="Votar este corte para el ranking"
+          aria-pressed={false}
+        >
+          <HeartIcon
+            className={clsx([
+              "h-6 w-7",
+              show === "seria-increible" && `fill-transparent text-show-seriaIncreible-primaryHover`,
+              show === "sone-que-volaba" && `fill-transparent text-show-soneQueVolaba-primaryHover`,
+              show === "paraiso-fiscal" && `fill-transparent text-show-paraisoFiscal-primaryHover`,
+              show === "se-extrana-a-la-nona" && `fill-transparent text-show-seExtranaALaNona-primaryHover`,
+              show === "generacion-dorada" && `fill-transparent text-show-generacionDorada-primaryHover`,
+              show === "cuando-eric-conocio-a-milton" && `fill-transparent text-show-cuandoEricConocioAMilton-primaryHover`,
+              show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`
+            ])}
+          />
+        </button>
+      </Form>
     </li>
   )
 }
