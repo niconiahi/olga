@@ -14,7 +14,10 @@
     "typegen": "wrangler types",
     "db:migrate": "wrangler d1 migrations apply olga-production --remote",
     "db:migrate:local": "wrangler d1 migrations apply olga-production --local",
-    "db:types": "npx kysely-codegen --out-file app/generated/db.ts --dialect=sqlite"
+    "db:types": "npx kysely-codegen --out-file app/generated/db.ts --dialect=sqlite",
+    "download": "sh scripts/download-audio.sh https://www.youtube.com/watch?v=I4Tth2wOQ4A audios/dudoso-raw.mp3",
+    "extract": "sh scripts/extract-range.sh audios/dudoso-raw.mp3 audios/dudoso.mp3 2582 2584.5",
+    "upload": "wrangler r2 object put olga-sounds/dudoso.mp3 --file=audios/dudoso.mp3 --content-type=mp3"
   },
   "dependencies": {
     "@biomejs/biome": "^1.6.4",
