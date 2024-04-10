@@ -1,6 +1,6 @@
 import * as v from "valibot"
 import { ActionFunctionArgs, json } from "@remix-run/cloudflare";
-import { fail } from "~/utils/http";
+import { error } from "~/utils/http";
 import { getQueryBuilder } from "~/utils/query-builder"
 import { getVideos } from "~/utils/video"
 import { dedupe, getCuts } from "~/utils/cut"
@@ -22,28 +22,19 @@ export async function action({
     year: formData.get("year"),
   })
   if (!valuesResult.success) {
-    throw fail(400, {
-      success: false,
-      error: valuesResult.issues[0].message
-    })
+    throw error(400, valuesResult.issues[0].message)
   }
   const { day, month, year } = valuesResult.output
 
   const queryBuilder = getQueryBuilder(context)
   const result = await getVideos(day, month)
   if (!result.success) {
-    return fail(400, {
-      success: false,
-      error: result.issues[0].message
-    })
+    return error(400, result.issues[0].message)
   }
 
   const nextVideos = result.output
   if (nextVideos.length === 0) {
-    return fail(409, {
-      success: false,
-      error: "No se encontraron videos en este dia",
-    })
+    return error(409, "No se encontraron videos en este dia")
   }
 
   const prevVideos = await queryBuilder
@@ -56,10 +47,7 @@ export async function action({
     ({ hash }) => !prevVideos.some(prevVideo => prevVideo.hash === hash),
   )
   if (videos.length === 0) {
-    return fail(409, {
-      success: false,
-      error: "Los videos de este dia ya fueron agregados",
-    })
+    return error(409, "Los videos de este dia ya fueron agregados")
   }
 
   await queryBuilder
@@ -84,9 +72,7 @@ export async function action({
   for (const { hash, id } of addedVideos) {
     const result = await getCuts(hash, id)
     if (!result.success) {
-      return fail(400, {
-        success: false, error: result.issues[0].message
-      })
+      return error(400, result.issues[0].message)
     }
 
     const cuts = dedupe(result.output)
