@@ -186,30 +186,22 @@ export default function() {
                         >
                           <ShowIcon show={show} className="h-12" />
                           <ul>
-                            {cuts
-                              .map((cut) => {
-                                return {
-                                  ...cut,
-                                  isUpvoted:
-                                    upvotes.some(({ cut_id }) => {
-                                      return cut_id === cut.id
-                                    })
-                                }
-                              })
-                              .map(({ label, start, hash, id, isUpvoted }) => {
-                                return (
-                                  <Heart
-                                    key={`cut-${show}-${hash}-${getSeconds(start)}-${id}`}
-                                    id={id}
-                                    hash={hash}
-                                    isUpvoted={isUpvoted}
-                                    start={start}
-                                    label={label}
-                                    userId={userId}
-                                    show={show}
-                                  />
-                                )
-                              })}
+                            {cuts.map(({ label, start, hash, id }) => {
+                              return (
+                                <Heart
+                                  key={`cut-${show}-${hash}-${getSeconds(start)}-${id}`}
+                                  id={id}
+                                  hash={hash}
+                                  isUpvoted={upvotes.some(({ cut_id }) => {
+                                    return cut_id === id
+                                  })}
+                                  start={start}
+                                  label={label}
+                                  userId={userId}
+                                  show={show}
+                                />
+                              )
+                            })}
                           </ul>
                         </li>
                       )
