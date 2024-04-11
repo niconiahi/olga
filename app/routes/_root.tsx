@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useRef } from "react"
 import { LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { Link, Outlet, useFetcher, useLoaderData, useLocation } from "@remix-run/react"
 import { validateSession } from "~/utils/auth"
