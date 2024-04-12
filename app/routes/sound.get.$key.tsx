@@ -4,7 +4,7 @@ import { error } from "~/utils/http";
 import * as v from "valibot"
 
 const ParamsSchema = v.object({
-  soundKey: v.string()
+  key: v.string()
 })
 
 export async function loader({ context, params: _params }: LoaderFunctionArgs) {
@@ -15,7 +15,7 @@ export async function loader({ context, params: _params }: LoaderFunctionArgs) {
   const params = paramsResult.output
 
   const env = getEnv(context)
-  const sound = await env.SOUNDS.get(params.soundKey)
+  const sound = await env.SOUNDS.get(params.key)
   if (sound === null) {
     throw error(404, 'Not found');
   }
