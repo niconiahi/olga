@@ -63,9 +63,9 @@ export default function() {
                 ])}
                 ref={cutsRef}
                 tabIndex={location.pathname === "/cuts/" ? -1 : 0}
-                to="/sounds"
+                to="/cuts"
               >
-                Botonera
+                Cortes
               </Link>
             </li>
             <li
@@ -82,9 +82,9 @@ export default function() {
                 ])}
                 ref={cutsRef}
                 tabIndex={location.pathname === "/cuts/" ? -1 : 0}
-                to="/cuts"
+                to="/sounds"
               >
-                Cortes
+                Botonera
               </Link>
             </li>
             <li

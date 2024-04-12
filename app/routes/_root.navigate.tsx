@@ -15,6 +15,14 @@ export default function() {
         <li className="flex">
           <Link
             className="mabry w-full border-2 border-solid border-brand-blue px-4 py-2.5 text-center text-lg text-brand-blue outline-4 outline-offset-0 focus-visible:outline focus-visible:outline-brand-red"
+            to="/sounds"
+          >
+            Botonera
+          </Link>
+        </li>
+        <li className="flex">
+          <Link
+            className="mabry w-full border-2 border-solid border-brand-blue px-4 py-2.5 text-center text-lg text-brand-blue outline-4 outline-offset-0 focus-visible:outline focus-visible:outline-brand-red"
             to="/ranking"
           >
             Ranking
