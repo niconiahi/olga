@@ -63,6 +63,25 @@ export default function() {
                 ])}
                 ref={cutsRef}
                 tabIndex={location.pathname === "/cuts/" ? -1 : 0}
+                to="/sounds"
+              >
+                Botonera
+              </Link>
+            </li>
+            <li
+              className={clsx("flex", [
+                location.pathname === "/cuts/"
+                && "-translate-x-0.5 -translate-y-1 transition-transform duration-100",
+              ])}
+            >
+              <Link
+                className={clsx([
+                  "mabry pointer-events-auto border-2 border-solid border-brand-blue bg-brand-stone px-4 py-[15px] text-lg text-brand-blue outline-4 outline-offset-0 hover:bg-brand-blueHover focus-visible:outline focus-visible:outline-brand-red md:py-2.5",
+                  location.pathname === "/cuts/"
+                  && "border-brand-red text-brand-red shadow-brandBlue transition-shadow duration-100",
+                ])}
+                ref={cutsRef}
+                tabIndex={location.pathname === "/cuts/" ? -1 : 0}
                 to="/cuts"
               >
                 Cortes

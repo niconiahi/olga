@@ -1,47 +1,33 @@
 import { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { useLoaderData } from "@remix-run/react";
+import { json, useLoaderData } from "@remix-run/react";
 import { useEffect, useRef } from "react";
-import { getEnv } from "~/utils/env";
-import { error } from "~/utils/http";
 
-export async function loader({ context }: LoaderFunctionArgs) {
-  const env = getEnv(context)
-  const sound = await env.SOUNDS.get("dudoso.mp3")
-  if (sound === null) {
-    return error(404, 'Not found');
-  }
-  return new Response(sound.body)
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url)
+  return json({ origin: url.origin })
 }
 
 export default function() {
-  const loaderData = useLoaderData<typeof loader>()
+  const { origin } = useLoaderData<typeof loader>()
   const audioRef = useRef<HTMLAudioElement>(null)
 
   useEffect(() => {
-    async function createObjectUrl() {
-      console.log()
-      const response = new Response(loaderData as ReadableStream)
-      const blob = await response.blob()
-      const url = URL.createObjectURL(blob)
-      return url
-    }
-
-    createObjectUrl().then((objectUrl) => {
-      console.log("objectUrl", objectUrl)
-      const audioElement = audioRef.current
-      if (audioElement) {
-        audioElement.src = objectUrl
-        audioElement.addEventListener("canplaythrough", () => {
-          audioElement.play();
-        });
-      }
-    })
-
-  }, [loaderData])
+    fetch(`${origin}/sound/get/dudoso.mp3`)
+      .then((response) => {
+        return response.blob()
+      })
+      .then((blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        const audioElement = audioRef.current
+        if (audioElement) {
+          audioElement.src = objectUrl
+        }
+      })
+  }, [])
 
   return (
     <figure>
-      <figcaption>Listen to the T-Rex:</figcaption>
+      <figcaption>Dudoso</figcaption>
       <audio ref={audioRef} controls src="."></audio>
     </figure>
   )
