@@ -4,6 +4,7 @@ import { error } from "~/utils/http";
 import { getQueryBuilder } from "~/utils/query-builder"
 import { getVideos } from "~/utils/video"
 import { dedupe, getCuts } from "~/utils/cut"
+import { getIsoString } from "~/utils/date";
 
 const ValuesSchema = v.object({
   day: v.coerce(v.number(), (input) => Number(input as string)),
@@ -17,6 +18,8 @@ const VideoSchema = v.object({
   id: v.number()
 })
 const VideosSchema = v.array(VideoSchema)
+export type Videos = v.Output<typeof VideosSchema>
+
 export const ResponseSchema = v.object({
   addedVideos: VideosSchema,
   error: v.union([v.null_(), v.string()])
@@ -85,13 +88,14 @@ export async function action({
     )
   }
 
+  const date = getIsoString(day, month, year)
   await queryBuilder
     .insertInto("video")
     .values(
       videos.map(({ hash, title, show }) => ({
         title,
         hash,
-        date: new Date(`${year}-${month}-${day}`).toISOString(),
+        date,
         show,
       })),
     )

@@ -2,7 +2,7 @@ import { useFetcher } from "@remix-run/react"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
 import * as v from "valibot"
-import { ResponseSchema } from "./cut.add"
+import { ResponseSchema } from "~/routes/cut.add"
 
 export default function() {
   const inputRef = useRef<HTMLInputElement>(null)

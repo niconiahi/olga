@@ -113,7 +113,6 @@ export async function loader({
 
 export default function() {
   const { cutsByDay: _cutsByDay, query: initialQuery, userId, upvotes } = useLoaderData<typeof loader>()
-  const [query, setQuery] = useState<string>(initialQuery ?? '')
   const cutsByDay = v.parse(cutsByDaySchema, _cutsByDay)
 
   return (
@@ -128,10 +127,7 @@ export default function() {
               Buscar por titulo
             </label>
             <input
-              value={query ?? undefined}
-              onChange={(event) => {
-                setQuery(String(event.target.value))
-              }}
+              defaultValue={initialQuery ?? ''}
               className="mabry w-full bg-transparent px-1 text-brand-blue outline-4 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-redHover"
               type="text"
               id="query"

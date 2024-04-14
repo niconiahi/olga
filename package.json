@@ -21,7 +21,7 @@
     "upload:local": "wrangler r2 object put olga-sounds/dudoso.mp3 --file=sounds/dudoso.mp3 --content-type=mp3 --local"
   },
   "dependencies": {
-    "@biomejs/biome": "^1.6.4",
+    "@lucia-auth/adapter-sqlite": "^3.0.1",
     "@remix-run/cloudflare": "^2.8.1",
     "@remix-run/cloudflare-pages": "^2.8.1",
     "@remix-run/react": "^2.8.1",
@@ -35,6 +35,7 @@
     "oslo": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "remix-utils": "^7.6.0",
     "valibot": "^0.30.0"
   },
   "devDependencies": {
