@@ -1,33 +1,34 @@
 import * as v from "valibot"
-import { ActionFunctionArgs, json } from "@remix-run/cloudflare";
-import { error } from "~/utils/http";
+import type { ActionFunctionArgs } from "@remix-run/cloudflare"
+import { json } from "@remix-run/cloudflare"
+import { error } from "~/utils/http"
 import { getQueryBuilder } from "~/utils/query-builder"
 import { getVideos } from "~/utils/video"
 import { dedupe, getCuts } from "~/utils/cut"
-import { getIsoString } from "~/utils/date";
+import { getIsoString } from "~/utils/date"
 
 const ValuesSchema = v.object({
-  day: v.coerce(v.number(), (input) => Number(input as string)),
-  month: v.coerce(v.number(), (input) => Number(input as string)),
-  year: v.coerce(v.number(), (input) => Number(input as string)),
+  day: v.coerce(v.number(), input => Number(input as string)),
+  month: v.coerce(v.number(), input => Number(input as string)),
+  year: v.coerce(v.number(), input => Number(input as string)),
 })
 
 const VideoSchema = v.object({
   hash: v.string(),
   title: v.string(),
-  id: v.number()
+  id: v.number(),
 })
 const VideosSchema = v.array(VideoSchema)
 export type Videos = v.Output<typeof VideosSchema>
 
 export const ResponseSchema = v.object({
   addedVideos: VideosSchema,
-  error: v.union([v.null_(), v.string()])
+  error: v.union([v.null_(), v.string()]),
 })
 
 export async function action({
   request,
-  context
+  context,
 }: ActionFunctionArgs) {
   const formData = await request.formData()
   const valuesResult = v.safeParse(ValuesSchema, {
@@ -40,8 +41,8 @@ export async function action({
       400,
       {
         error: valuesResult.issues[0].message,
-        addedVideos: []
-      }
+        addedVideos: [],
+      },
     )
   }
   const { day, month, year } = valuesResult.output
@@ -53,8 +54,8 @@ export async function action({
       400,
       {
         error: result.issues[0].message,
-        addedVideos: []
-      }
+        addedVideos: [],
+      },
     )
   }
 
@@ -64,8 +65,8 @@ export async function action({
       409,
       {
         error: "No se encontraron videos en este dia",
-        addedVideos: []
-      }
+        addedVideos: [],
+      },
     )
   }
 
@@ -83,8 +84,8 @@ export async function action({
       409,
       {
         error: "Los videos de este dia ya fueron agregados",
-        addedVideos: []
-      }
+        addedVideos: [],
+      },
     )
   }
 
@@ -107,13 +108,12 @@ export async function action({
     .where(eb => eb.or(videos.map(({ hash }) => eb("hash", "=", hash))))
     .execute()
 
-
   for (const { hash, id } of addedVideos) {
     const result = await getCuts(hash, id)
     if (!result.success) {
       return error(
         400,
-        result.issues[0].message
+        result.issues[0].message,
       )
     }
 

@@ -1,11 +1,11 @@
-import { LoaderFunctionArgs } from "@remix-run/cloudflare";
-import { json, useLoaderData } from "@remix-run/react";
-import { useEffect, useRef } from "react";
-import { getEnv } from "~/utils/env";
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
+import { json, useLoaderData } from "@remix-run/react"
+import { useEffect, useRef } from "react"
 import * as v from "valibot"
+import { getEnv } from "~/utils/env"
 
 const SoundSchema = v.object({
-  key: v.string()
+  key: v.string(),
 })
 type Sound = v.Output<typeof SoundSchema>
 
@@ -13,11 +13,11 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const url = new URL(request.url)
   const env = getEnv(context)
   const _sounds = await env.SOUNDS.list()
-  const sounds = _sounds.objects.map((_sound) => ({ key: _sound.key }))
+  const sounds = _sounds.objects.map(_sound => ({ key: _sound.key }))
   return json({ sounds, origin: url.origin })
 }
 
-export default function() {
+export default function () {
   const { origin, sounds } = useLoaderData<typeof loader>()
 
   return (
@@ -32,9 +32,10 @@ export default function() {
 }
 
 function Button({
-  sound, origin
+  sound,
+  origin,
 }: {
-  sound: Sound,
+  sound: Sound
   origin: string
 }) {
   const audioRef = useRef<HTMLAudioElement>(null)
@@ -46,11 +47,10 @@ function Button({
         return response.blob()
       })
       .then((blob) => {
-        const objectUrl = URL.createObjectURL(blob);
+        const objectUrl = URL.createObjectURL(blob)
         const audioElement = audioRef.current
-        if (audioElement) {
+        if (audioElement)
           audioElement.src = objectUrl
-        }
       })
   }, [])
 
@@ -58,14 +58,17 @@ function Button({
     <figure className="p-1.5 border-solid border-2 border-brand-blue">
       <figcaption
         className="mabry uppercase text-brand-blue"
-      >{key.replace('.mp3', '')}</figcaption>
+      >
+        {key.replace(".mp3", "")}
+      </figcaption>
       <audio
         className=""
         ref={audioRef}
         controls
         controlsList="nofullscreen nodownload noremoteplayback noplaybackrate"
         src="."
-      ></audio>
+      >
+      </audio>
     </figure>
   )
 }

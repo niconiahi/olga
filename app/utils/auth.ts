@@ -1,7 +1,7 @@
 import { D1Adapter } from "@lucia-auth/adapter-sqlite"
-import { AppLoadContext } from "@remix-run/cloudflare"
+import type { AppLoadContext } from "@remix-run/cloudflare"
 import { Google } from "arctic"
-import { Lucia, verifyRequestOrigin } from "lucia"
+import { Lucia } from "lucia"
 import { getEnv } from "~/utils/env"
 import { getOrigin } from "~/utils/routes"
 
@@ -41,7 +41,7 @@ export function createGoogleAuth(context: AppLoadContext) {
 
 export async function validateSession(
   request: Request,
-  context: AppLoadContext
+  context: AppLoadContext,
 ) {
   // const env = getEnv(context)
   const auth = getAuth(context)

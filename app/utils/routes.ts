@@ -8,4 +8,3 @@ export function getOrigin(env: Env) {
     ? DEVELOPMENT_ORIGIN
     : PRODUCTION_ORIGIN
 }
-

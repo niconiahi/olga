@@ -1,22 +1,23 @@
 import { useRef } from "react"
-import { LoaderFunctionArgs } from "@remix-run/cloudflare"
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { Link, Outlet, useFetcher, useLoaderData, useLocation } from "@remix-run/react"
-import { validateSession } from "~/utils/auth"
 import { clsx } from "clsx"
+import { validateSession } from "~/utils/auth"
 import { LogoutIcon } from "~/components/icons/logout"
 import { LoginIcon } from "~/components/icons/login"
 import { OlgaIcon } from "~/components/icons/olga"
 import { HamburgerIcon } from "~/components/icons/hamburger"
 
 export async function loader({
-  request, context
+  request,
+  context,
 }: LoaderFunctionArgs) {
   const { user } = await validateSession(request, context)
 
   return { userId: user?.id }
 }
 
-export default function() {
+export default function () {
   const { userId } = useLoaderData<typeof loader>()
   const logoRef = useRef<HTMLAnchorElement>(null)
   const rankingRef = useRef<HTMLAnchorElement>(null)
@@ -120,7 +121,7 @@ export default function() {
                     </button>
                   </fetcher.Form>
                 </li>
-              )
+                )
               : (
                 <li
                   className={clsx("flex", [
@@ -159,7 +160,7 @@ export default function() {
                     />
                   </Link>
                 </li>
-              )}
+                )}
           </ul>
         </nav>
         <nav className="pointer-events-auto md:hidden">
@@ -178,7 +179,7 @@ export default function() {
                     </button>
                   </fetcher.Form>
                 </li>
-              )
+                )
               : (
                 <li className="flex">
                   <Link
@@ -189,7 +190,7 @@ export default function() {
                     <LoginIcon className="h-8 text-brand-blue" />
                   </Link>
                 </li>
-              )}
+                )}
             <li className="flex">
               <Link
                 to="/navigate"

@@ -4,14 +4,13 @@ import { useEffect, useRef } from "react"
 import * as v from "valibot"
 import { ResponseSchema } from "~/routes/cut.add"
 
-export default function() {
+export default function () {
   const inputRef = useRef<HTMLInputElement>(null)
   const fetcher = useFetcher()
 
   useEffect(() => {
-    if (!inputRef.current) {
+    if (!inputRef.current)
       return
-    }
 
     inputRef.current.focus()
   })
@@ -82,15 +81,15 @@ export default function() {
           Agregar
         </button>
         {actionData?.error !== undefined
-          && actionData.addedVideos
-          && actionData.addedVideos.length > 0
+        && actionData.addedVideos
+        && actionData.addedVideos.length > 0
           ? (
             <ul>
               {actionData.addedVideos.map(({ title }) => (
                 <li key={`video_${title}`}>{title}</li>
               ))}
             </ul>
-          )
+            )
           : null}
       </fetcher.Form>
     </section>

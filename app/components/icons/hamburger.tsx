@@ -30,5 +30,3 @@ export function HamburgerIcon({ className }: { className?: string }) {
     </svg>
   )
 }
-
-

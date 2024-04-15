@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import type { ReactElement } from "react"
 
-export default function() {
+export default function () {
   const inputRef = useRef<HTMLInputElement>()
 
   useEffect(() => {

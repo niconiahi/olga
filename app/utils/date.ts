@@ -14,7 +14,7 @@ export function getMonth(date: Date) {
 export function getIsoString(
   day: number,
   month: number,
-  year: number
+  year: number,
 ) {
   return new Date(`${year}-${month}-${day}`).toISOString()
 }

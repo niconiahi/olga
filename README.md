@@ -47,7 +47,6 @@ npm run deploy
 
 [bindings]: https://developers.cloudflare.com/pages/functions/bindings/
 
-
 WORKING WITH SOUNDS:
 
 pnpm run download

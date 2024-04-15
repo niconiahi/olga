@@ -56,10 +56,12 @@ export function getSeconds(start: string) {
     seconds += parts[0] * 3600
     seconds += parts[1] * 60
     seconds += parts[2]
-  } else if (parts.length === 2) {
+  }
+  else if (parts.length === 2) {
     seconds += parts[0] * 60
     seconds += parts[1]
-  } else if (parts.length === 1) {
+  }
+  else if (parts.length === 1) {
     seconds = parts[0]
   }
   return seconds
@@ -72,4 +74,3 @@ export async function getCuts(hash: string, videoId: number) {
   const raws = getRaws(html, videoId)
   return v.safeParse(cutsSchema, raws)
 }
-

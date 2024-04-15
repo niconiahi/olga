@@ -1,7 +1,8 @@
-import { getQueryBuilder } from "~/utils/query-builder"
 import { sql } from "kysely"
 import * as v from "valibot"
-import { LoaderFunctionArgs, json } from "@remix-run/cloudflare"
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
+import { json } from "@remix-run/cloudflare"
+import { getQueryBuilder } from "~/utils/query-builder"
 
 export const CutsSchema = v.array(
   v.object({

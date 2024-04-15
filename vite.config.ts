@@ -3,7 +3,7 @@ import {
   cloudflareDevProxyVitePlugin as remixCloudflareDevProxy,
 } from "@remix-run/dev"
 import { defineConfig } from "vite"
-import { remixDevTools } from "remix-development-tools";
+import { remixDevTools } from "remix-development-tools"
 import tsconfigPaths from "vite-tsconfig-paths"
 
 export default defineConfig({
@@ -11,7 +11,7 @@ export default defineConfig({
     remixDevTools(),
     remixCloudflareDevProxy(),
     remix(),
-    tsconfigPaths()
+    tsconfigPaths(),
   ],
   optimizeDeps: {
     exclude: ["oslo"],

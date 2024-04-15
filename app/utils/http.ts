@@ -1,20 +1,20 @@
 export function error(
   status: number,
   message: string | Record<string, unknown>,
-  init?: ResponseInit
+  init?: ResponseInit,
 ) {
   return new Response(
-    typeof message === 'string' ? message : JSON.stringify(message),
+    typeof message === "string" ? message : JSON.stringify(message),
     {
-      ...(init ? init : {}),
+      ...(init || {}),
       status,
       headers: {
         ...(init?.headers ? init.headers : {}),
-        ...(typeof message !== 'string'
+        ...(typeof message !== "string"
           ? { "Content-Type": "application/json" }
           : {}
         ),
       },
-    }
+    },
   )
 }

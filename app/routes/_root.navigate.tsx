@@ -1,6 +1,6 @@
-import { Link } from "@remix-run/react";
+import { Link } from "@remix-run/react"
 
-export default function() {
+export default function () {
   return (
     <nav>
       <ul className="space-y-2">

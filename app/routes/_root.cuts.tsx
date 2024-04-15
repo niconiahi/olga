@@ -1,51 +1,55 @@
 import clsx from "clsx"
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
+import { defer } from "@remix-run/cloudflare"
+import * as v from "valibot"
+import { Await, Form, useFetcher, useLoaderData } from "@remix-run/react"
+import type { ReactNode } from "react"
+import { Suspense } from "react"
 import type { Cuts } from "~/routes/cut.get.all"
 import { CutsSchema } from "~/routes/cut.get.all"
 import { HeartIcon } from "~/components/icons/heart"
 import { getSeconds } from "~/utils/cut"
-import { Show, ShowSchema } from "~/utils/video"
+import type { Show } from "~/utils/video"
+import { ShowSchema } from "~/utils/video"
 import { getDay, getMonth } from "~/utils/date"
 import { validateSession } from "~/utils/auth"
 import { ShowIcon } from "~/components/icons/show-icon"
-import { LoaderFunctionArgs, defer } from "@remix-run/cloudflare"
-import * as v from "valibot"
 import { error } from "~/utils/http"
-import { Await, Form, useFetcher, useLoaderData } from "@remix-run/react"
-import { ReactNode, Suspense } from "react"
 import { UpvotesSchema } from "~/routes/upvote.get.$userId"
 
 const cutsByDaySchema = v.array(
   v.tuple([
     v.coerce(
       v.date(),
-      (input) => new Date(input as string)
+      input => new Date(input as string),
     ),
     v.array(
-      v.tuple([ShowSchema, CutsSchema])
-    )
+      v.tuple([ShowSchema, CutsSchema]),
+    ),
   ]),
 )
 
 export async function loader({
-  request, context
+  request,
+  context,
 }: LoaderFunctionArgs) {
   const url = new URL(request.url)
   const searchParams = new URLSearchParams(url.search)
   const query = searchParams.get("query")
   const { user } = await validateSession(request, context)
 
-  const upvotes =
-    user
-      ? fetch(`${url.origin}/upvote/get/${user.id}`).then((raw) => raw.json())
-      : new Promise((resolve) => resolve([]))
+  const upvotes
+    = user
+      ? fetch(`${url.origin}/upvote/get/${user.id}`).then(raw => raw.json())
+      : new Promise(resolve => resolve([]))
 
   const cutsResult = v.safeParse(
     CutsSchema,
-    await (await fetch(`${url.origin}/cut/get/all`)).json()
+    await (await fetch(`${url.origin}/cut/get/all`)).json(),
   )
-  if (!cutsResult.success) {
+  if (!cutsResult.success)
     throw error(400, cutsResult.issues[0].message)
-  }
+
   const cuts = cutsResult.output
 
   const cutsByDay = Object.entries(
@@ -78,14 +82,14 @@ export async function loader({
           ...prevDays,
           [date]: prevDays[date]
             ? {
-              ...prevDays[date],
-              [show]: prevDays[date][show]
-                ? [...prevDays[date][show], cut]
-                : [cut],
-            }
+                ...prevDays[date],
+                [show]: prevDays[date][show]
+                  ? [...prevDays[date][show], cut]
+                  : [cut],
+              }
             : {
-              [show]: [cut],
-            },
+                [show]: [cut],
+              },
         }
       }, {}),
   )
@@ -99,9 +103,8 @@ export async function loader({
     })
 
   const _result = v.safeParse(cutsByDaySchema, cutsByDay)
-  if (!_result.success) {
+  if (!_result.success)
     throw error(400, _result.issues[0].message)
-  }
 
   return defer({
     cutsByDay: _result.output,
@@ -111,7 +114,7 @@ export async function loader({
   })
 }
 
-export default function() {
+export default function () {
   const { cutsByDay: _cutsByDay, query: initialQuery, userId, upvotes } = useLoaderData<typeof loader>()
   const cutsByDay = v.parse(cutsByDaySchema, _cutsByDay)
 
@@ -127,7 +130,7 @@ export default function() {
               Buscar por titulo
             </label>
             <input
-              defaultValue={initialQuery ?? ''}
+              defaultValue={initialQuery ?? ""}
               className="mabry w-full bg-transparent px-1 text-brand-blue outline-4 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-redHover"
               type="text"
               id="query"
@@ -179,7 +182,7 @@ export default function() {
                               return (
                                 <Suspense
                                   key={`cut-${show}-${hash}-${getSeconds(start)}-${id}`}
-                                  fallback={
+                                  fallback={(
                                     <HeartFallback
                                       id={id}
                                       hash={hash}
@@ -188,17 +191,17 @@ export default function() {
                                       userId={userId}
                                       show={show}
                                     />
-                                  }
+                                  )}
                                 >
                                   <Await resolve={upvotes}>
                                     {(_upvotes) => {
                                       const upvotesResult = v.safeParse(
                                         UpvotesSchema,
-                                        _upvotes
+                                        _upvotes,
                                       )
-                                      if (!upvotesResult.success) {
+                                      if (!upvotesResult.success)
                                         throw error(400, upvotesResult.issues[0].message)
-                                      }
+
                                       const upvotes = upvotesResult.output
 
                                       return (
@@ -240,18 +243,18 @@ function Heart({
   label,
   isUpvoted,
   userId,
-  id
+  id,
 }: {
-  show: Show,
-  hash: string,
-  start: string,
-  label: string,
-  isUpvoted: boolean,
-  userId: string | undefined,
+  show: Show
+  hash: string
+  start: string
+  label: string
+  isUpvoted: boolean
+  userId: string | undefined
   id: number
 }) {
   const fetcher = useFetcher({ key: `upvote-${id}` })
-  const isRequesting = fetcher.state === 'submitting' || fetcher.state === 'loading'
+  const isRequesting = fetcher.state === "submitting" || fetcher.state === "loading"
 
   return (
     <li className="flex items-start space-x-2 py-0.5">
@@ -304,29 +307,31 @@ function Heart({
           }
           aria-pressed={isUpvoted}
         >
-          {isRequesting ? (
-            <HeartIcon className='h-6 w-7 fill-gray-300 text-gray-500' />
-          ) : (
-            <HeartIcon
-              className={clsx([
-                "h-6 w-7",
-                isUpvoted && show === "seria-increible" && `fill-show-seriaIncreible-primaryHover text-show-seriaIncreible-primary`,
-                isUpvoted && show === "sone-que-volaba" && `fill-show-soneQueVolaba-primaryHover text-show-soneQueVolaba-primary`,
-                isUpvoted && show === "paraiso-fiscal" && `fill-show-paraisoFiscal-primaryHover text-show-paraisoFiscal-primary`,
-                isUpvoted && show === "se-extrana-a-la-nona" && `fill-show-seExtranaALaNona-primaryHover text-show-seExtranaALaNona-primary`,
-                isUpvoted && show === "generacion-dorada" && `fill-show-generacionDorada-primaryHover text-show-generacionDorada-primary`,
-                isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-show-cuandoEricConocioAMilton-primaryHover text-show-cuandoEricConocioAMilton-primary`,
-                isUpvoted && show === "mi-primo-es-asi" && `fill-show-miPrimoEsAsi-primaryHover text-show-miPrimoEsAsi-primary`,
-                !isUpvoted && show === "seria-increible" && `fill-transparent text-show-seriaIncreible-primaryHover`,
-                !isUpvoted && show === "sone-que-volaba" && `fill-transparent text-show-soneQueVolaba-primaryHover`,
-                !isUpvoted && show === "paraiso-fiscal" && `fill-transparent text-show-paraisoFiscal-primaryHover`,
-                !isUpvoted && show === "se-extrana-a-la-nona" && `fill-transparent text-show-seExtranaALaNona-primaryHover`,
-                !isUpvoted && show === "generacion-dorada" && `fill-transparent text-show-generacionDorada-primaryHover`,
-                !isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-transparent text-show-cuandoEricConocioAMilton-primaryHover`,
-                !isUpvoted && show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`
-              ])}
-            />
-          )}
+          {isRequesting
+            ? (
+              <HeartIcon className="h-6 w-7 fill-gray-300 text-gray-500" />
+              )
+            : (
+              <HeartIcon
+                className={clsx([
+                  "h-6 w-7",
+                  isUpvoted && show === "seria-increible" && `fill-show-seriaIncreible-primaryHover text-show-seriaIncreible-primary`,
+                  isUpvoted && show === "sone-que-volaba" && `fill-show-soneQueVolaba-primaryHover text-show-soneQueVolaba-primary`,
+                  isUpvoted && show === "paraiso-fiscal" && `fill-show-paraisoFiscal-primaryHover text-show-paraisoFiscal-primary`,
+                  isUpvoted && show === "se-extrana-a-la-nona" && `fill-show-seExtranaALaNona-primaryHover text-show-seExtranaALaNona-primary`,
+                  isUpvoted && show === "generacion-dorada" && `fill-show-generacionDorada-primaryHover text-show-generacionDorada-primary`,
+                  isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-show-cuandoEricConocioAMilton-primaryHover text-show-cuandoEricConocioAMilton-primary`,
+                  isUpvoted && show === "mi-primo-es-asi" && `fill-show-miPrimoEsAsi-primaryHover text-show-miPrimoEsAsi-primary`,
+                  !isUpvoted && show === "seria-increible" && `fill-transparent text-show-seriaIncreible-primaryHover`,
+                  !isUpvoted && show === "sone-que-volaba" && `fill-transparent text-show-soneQueVolaba-primaryHover`,
+                  !isUpvoted && show === "paraiso-fiscal" && `fill-transparent text-show-paraisoFiscal-primaryHover`,
+                  !isUpvoted && show === "se-extrana-a-la-nona" && `fill-transparent text-show-seExtranaALaNona-primaryHover`,
+                  !isUpvoted && show === "generacion-dorada" && `fill-transparent text-show-generacionDorada-primaryHover`,
+                  !isUpvoted && show === "cuando-eric-conocio-a-milton" && `fill-transparent text-show-cuandoEricConocioAMilton-primaryHover`,
+                  !isUpvoted && show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`,
+                ])}
+              />
+              )}
         </button>
       </fetcher.Form>
     </li>
@@ -339,15 +344,15 @@ function HeartFallback({
   start,
   label,
   userId,
-  id
+  id,
 }: {
-  show: Show,
-  hash: string,
-  start: string,
-  label: string,
-  userId: string | undefined,
+  show: Show
+  hash: string
+  start: string
+  label: string
+  userId: string | undefined
   id: number
-}
+},
 ) {
   return (
     <li className="flex items-start space-x-2 py-0.5">
@@ -403,7 +408,7 @@ function HeartFallback({
               show === "se-extrana-a-la-nona" && `fill-transparent text-show-seExtranaALaNona-primaryHover`,
               show === "generacion-dorada" && `fill-transparent text-show-generacionDorada-primaryHover`,
               show === "cuando-eric-conocio-a-milton" && `fill-transparent text-show-cuandoEricConocioAMilton-primaryHover`,
-              show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`
+              show === "mi-primo-es-asi" && `fill-transparent text-show-miPrimoEsAsi-primaryHover`,
             ])}
           />
         </button>
@@ -416,8 +421,8 @@ function HeartStart({
   show,
   start,
 }: {
-  show: Show,
-  start: string,
+  show: Show
+  start: string
 }) {
   return (
     <span
@@ -441,8 +446,8 @@ function HeartLabel({
   show,
   label,
 }: {
-  show: Show,
-  label: string,
+  show: Show
+  label: string
 }) {
   return (
 
@@ -468,13 +473,13 @@ function HeartLink(
     show,
     hash,
     start,
-    children
+    children,
   }: {
-    show: Show,
-    hash: string,
-    start: string,
+    show: Show
+    hash: string
+    start: string
     children?: ReactNode
-  }
+  },
 ) {
   return (
     <a

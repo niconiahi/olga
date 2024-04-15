@@ -1,8 +1,8 @@
-import { AppLoadContext } from "@remix-run/cloudflare"
+import type { AppLoadContext } from "@remix-run/cloudflare"
 import { Kysely } from "kysely"
 import { D1Dialect } from "kysely-d1"
-import { DB } from "~/generated/db"
 import { getEnv } from "./env"
+import type { DB } from "~/generated/db"
 
 export function getQueryBuilder(context: AppLoadContext) {
   const env = getEnv(context)

@@ -2,9 +2,9 @@
 // by running `wrangler types`
 
 interface Env {
-	GOOGLE_CLIENT_ID: string;
-	GOOGLE_CLIENT_SECRET: string;
-	ENVIRONMENT: string;
-	SOUNDS: R2Bucket;
-	DB: D1Database;
+  GOOGLE_CLIENT_ID: string
+  GOOGLE_CLIENT_SECRET: string
+  ENVIRONMENT: string
+  SOUNDS: R2Bucket
+  DB: D1Database
 }

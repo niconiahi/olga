@@ -1,10 +1,11 @@
 import { OAuth2RequestError } from "arctic"
 import { generateId } from "lucia"
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
+import { redirect } from "@remix-run/cloudflare"
+import * as v from "valibot"
 import { getQueryBuilder } from "~/utils/query-builder"
 import { createGoogleAuth, getAuth, validateSession } from "~/utils/auth"
-import { LoaderFunctionArgs, redirect } from "@remix-run/cloudflare"
 import { getCodeVerifierCookie, getStateCookie } from "~/cookies.server"
-import * as v from "valibot"
 import { error } from "~/utils/http"
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
@@ -21,9 +22,8 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const code = searchParams.get("code")
   const state = searchParams.get("state")
 
-  if (!code || !storedState || !storedCodeVerifier || state !== storedState || typeof storedCodeVerifier !== 'string') {
+  if (!code || !storedState || !storedCodeVerifier || state !== storedState || typeof storedCodeVerifier !== "string")
     throw error(400, `expected Google's states to match but the don't`)
-  }
 
   const tokens = await googleAuth.validateAuthorizationCode(code, storedCodeVerifier)
   const response = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {
@@ -33,10 +33,11 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   })
     .then(response => response.json())
     .catch((e) => {
-      if (e instanceof OAuth2RequestError)
+      if (e instanceof OAuth2RequestError) {
         throw new Response(`invalid code`, {
-          status: 400
+          status: 400,
         })
+      }
     })
   const GoogleUserSchema = v.object({
     sub: v.string(),
@@ -74,5 +75,3 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   headers.append("Set-Cookie", sessionCookie.serialize())
   return redirect("/", { headers })
 }
-
-

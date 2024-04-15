@@ -1,6 +1,7 @@
-import { getQueryBuilder } from "~/utils/query-builder"
 import * as v from "valibot"
-import { LoaderFunctionArgs, json } from "@remix-run/cloudflare"
+import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
+import { json } from "@remix-run/cloudflare"
+import { getQueryBuilder } from "~/utils/query-builder"
 
 export const CutsSchema = v.array(
   v.object({
@@ -32,8 +33,7 @@ export async function loader({ context }: LoaderFunctionArgs) {
 
   return json(cuts, {
     headers: {
-      "Cache-Control": `s-maxage=${60 * 5}, stale-while-revalidate=${60 * 60 * 24 * 7}`
-    }
+      "Cache-Control": `s-maxage=${60 * 5}, stale-while-revalidate=${60 * 60 * 24 * 7}`,
+    },
   })
 }
-

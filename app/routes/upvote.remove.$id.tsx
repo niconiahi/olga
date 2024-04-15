@@ -1,10 +1,11 @@
-import { ActionFunctionArgs, json } from "@remix-run/cloudflare"
+import type { ActionFunctionArgs } from "@remix-run/cloudflare"
+import { json } from "@remix-run/cloudflare"
 import * as v from "valibot"
 import { error } from "~/utils/http"
 import { getQueryBuilder } from "~/utils/query-builder"
 
 const UpvoteSchema = v.object({
-  cutId: v.coerce(v.number(), (input) => Number(input as string)),
+  cutId: v.coerce(v.number(), input => Number(input as string)),
   userId: v.string(),
 })
 export const UpvotesSchema = v.array(
@@ -22,9 +23,9 @@ export type Upvotes = v.Input<typeof UpvotesSchema>
 export async function action({ request, context }: ActionFunctionArgs) {
   const data = await request.json()
   const result = v.safeParse(UpvoteSchema, data)
-  if (!result.success) {
+  if (!result.success)
     throw error(400, result.issues[0].message)
-  }
+
   const { cutId, userId } = result.output
 
   const queryBuilder = getQueryBuilder(context)
