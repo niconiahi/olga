@@ -17,11 +17,11 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   return json({ sounds, origin: url.origin })
 }
 
-export default function () {
+export default function() {
   const { origin, sounds } = useLoaderData<typeof loader>()
 
   return (
-    <ul className="grid grid-cols-1">
+    <ul className="grid grid-cols-1 space-y-2">
       {sounds.map((sound) => {
         return (
           <Button sound={sound} origin={origin} key={`sound-${sound.key}`} />
@@ -59,7 +59,7 @@ function Button({
       <figcaption
         className="mabry uppercase text-brand-blue"
       >
-        {key.replace(".mp3", "")}
+        {key.replaceAll('-', ' ').replace(".mp3", "")}
       </figcaption>
       <audio
         className=""
