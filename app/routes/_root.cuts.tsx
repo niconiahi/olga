@@ -11,7 +11,7 @@ import { LoaderFunctionArgs, defer } from "@remix-run/cloudflare"
 import * as v from "valibot"
 import { error } from "~/utils/http"
 import { Await, Form, useFetcher, useLoaderData } from "@remix-run/react"
-import { ReactNode, Suspense, useState } from "react"
+import { ReactNode, Suspense } from "react"
 import { UpvotesSchema } from "~/routes/upvote.get.$userId"
 
 const cutsByDaySchema = v.array(

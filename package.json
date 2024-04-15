@@ -5,6 +5,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "remix vite:build",
+    "build:icons": "icons build -i ./app/components/icon/svg -o ./app/components/icon --verbose",
     "deploy": "wrangler pages deploy",
     "dev": "remix vite:dev",
     "lint": "eslint .",
@@ -42,6 +43,7 @@
     "@antfu/eslint-config": "^2.12.2",
     "@cloudflare/workers-types": "^4.20240405.0",
     "@remix-run/dev": "^2.8.1",
+    "@sly-cli/sly": "^1.10.0",
     "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.24",
     "autoprefixer": "^10.4.19",
@@ -49,6 +51,7 @@
     "eslint-plugin-format": "^0.1.0",
     "kysely-codegen": "^0.14.2",
     "remix-development-tools": "^4.1.4",
+    "svg-icons-cli": "^0.0.8",
     "tailwind-merge": "^2.2.2",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.4",
