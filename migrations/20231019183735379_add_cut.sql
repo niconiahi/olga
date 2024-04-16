@@ -3,5 +3,7 @@ CREATE TABLE "cut" (
   "label" TEXT NOT NULL,
   "start" TEXT NOT NULL,
   "video_id" INTEGER NOT NULL,
-  FOREIGN KEY(video_id) REFERENCES video(id)
+  FOREIGN KEY(video_id) REFERENCES video(id),
+  "created_at" DATETIME DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" DATETIME
 );

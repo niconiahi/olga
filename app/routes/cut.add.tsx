@@ -48,18 +48,18 @@ export async function action({
   const { day, month, year } = valuesResult.output
 
   const queryBuilder = getQueryBuilder(context)
-  const result = await getVideos(day, month)
-  if (!result.success) {
+
+  const videosResult = await getVideos(day, month)
+  if (!videosResult.success) {
     return error(
       400,
       {
-        error: result.issues[0].message,
+        error: videosResult.issues[0].message,
         addedVideos: [],
       },
     )
   }
-
-  const nextVideos = result.output
+  const nextVideos = videosResult.output
   if (nextVideos.length === 0) {
     return error(
       409,

@@ -1,3 +1,5 @@
+import * as v from "valibot"
+
 export function getYear(date: Date) {
   return String(date.getUTCFullYear())
 }
@@ -18,3 +20,8 @@ export function getIsoString(
 ) {
   return new Date(`${year}-${month}-${day}`).toISOString()
 }
+
+export const DateSchema = v.coerce(
+  v.date(),
+  (input) => new Date(input as string)
+)

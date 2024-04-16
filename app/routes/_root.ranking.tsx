@@ -39,12 +39,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return { cutsByShow: _result.output }
 }
 
-export default function () {
+export default function() {
   const { cutsByShow } = useLoaderData<typeof loader>()
 
   return (
     <section className="flex h-full flex-1 flex-col items-start justify-center space-y-2">
-      <h2 className="bebas text-3xl uppercase leading-none text-brand-red">
+      <h2 className="mabry text-3xl uppercase leading-none text-brand-red">
         Top 50
       </h2>
       <ul className="w-full grow space-y-2">
