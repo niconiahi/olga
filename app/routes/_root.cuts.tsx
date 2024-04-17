@@ -19,11 +19,12 @@ import { UpvotesSchema } from "~/routes/upvote.get.$userId"
 import { getQueryBuilder } from "~/utils/query-builder"
 import { DAYS } from "~/generated/days"
 
-export const INTENT = {
+export const ACTION = {
   query: "query" as const,
   setMonth: "setMonth" as const,
   setYear: "setYear" as const,
   nextMonth: "nextMonth" as const,
+  clearQuery: "clearQuery" as const,
 };
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -35,7 +36,7 @@ export async function action({ request }: ActionFunctionArgs) {
   }
 
   switch (action) {
-    case INTENT.setMonth: {
+    case ACTION.clearQuery: {
       const searchParams = new URLSearchParams()
       const month = v.parse(v.string(), formData.get('month'))
       const year = v.parse(v.string(), formData.get('year'))
@@ -43,7 +44,17 @@ export async function action({ request }: ActionFunctionArgs) {
       searchParams.set('year', year)
       return redirect(`/cuts?${searchParams.toString()}`)
     }
-    case INTENT.setYear: {
+    case ACTION.query: {
+      const searchParams = new URLSearchParams()
+      const month = v.parse(v.string(), formData.get('month'))
+      const year = v.parse(v.string(), formData.get('year'))
+      const query = v.parse(v.string(), formData.get('query'))
+      searchParams.set('month', month)
+      searchParams.set('year', year)
+      searchParams.set('query', query)
+      return redirect(`/cuts?${searchParams.toString()}`)
+    }
+    case ACTION.setMonth: {
       const searchParams = new URLSearchParams()
       const month = v.parse(v.string(), formData.get('month'))
       const year = v.parse(v.string(), formData.get('year'))
@@ -51,7 +62,15 @@ export async function action({ request }: ActionFunctionArgs) {
       searchParams.set('year', year)
       return redirect(`/cuts?${searchParams.toString()}`)
     }
-    case INTENT.nextMonth: {
+    case ACTION.setYear: {
+      const searchParams = new URLSearchParams()
+      const month = v.parse(v.string(), formData.get('month'))
+      const year = v.parse(v.string(), formData.get('year'))
+      searchParams.set('month', month)
+      searchParams.set('year', year)
+      return redirect(`/cuts?${searchParams.toString()}`)
+    }
+    case ACTION.nextMonth: {
       const searchParams = new URLSearchParams()
       const month = v.parse(v.string(), formData.get('month'))
       const year = v.parse(v.string(), formData.get('year'))
@@ -114,7 +133,9 @@ export async function loader({
 
   const cutsResult = v.safeParse(
     CutsSchema,
-    await (await fetch(`${url.origin}/cut/get/month?month=${month}&year=${year}`)).json(),
+    await (await fetch(query
+      ? `${url.origin}/cut/get/all`
+      : `${url.origin}/cut/get/month?month=${month}&year=${year}`)).json(),
   )
   if (!cutsResult.success) {
     throw error(400, cutsResult.issues[0].message)
@@ -152,12 +173,29 @@ export default function() {
 
   return (
     <>
-      <section className="grid grid-cols-2 grid-rows-2 gap-2">
-        <Form className="flex w-full items-center justify-between border-2 border-brand-red col-span-2">
+      <section className={clsx([
+        "grid grid-cols-2 grid-rows-2 gap-2",
+        query && "grid-rows-1"
+      ])}>
+        <Form
+          method="POST"
+          reloadDocument
+          className="flex w-full items-center justify-between border-2 border-brand-red col-span-2"
+        >
           <input
             type="hidden"
             name="_action"
-            value={INTENT.query}
+            value={ACTION.query}
+          />
+          <input
+            type="hidden"
+            name="year"
+            defaultValue={searchParams.get('year') ?? undefined}
+          />
+          <input
+            type="hidden"
+            name="month"
+            defaultValue={searchParams.get('month') ?? undefined}
           />
           <p className="w-full px-2">
             <label htmlFor="query" className="sr-only">
@@ -178,62 +216,95 @@ export default function() {
             Buscar
           </button>
         </Form>
-        <Form>
-          <input
-            type="hidden"
-            name="_action"
-            value={INTENT.setYear}
-          />
-          <input
-            type="hidden"
-            name="month"
-            defaultValue={searchParams.get('month') ?? undefined}
-          />
-          <select
-            defaultValue={searchParams.get('year') ?? undefined}
-            className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
-            name="year"
-            onChange={(event) => {
-              (event.target.parentElement as HTMLFormElement).submit()
-            }}
+        {query ? (
+          <Form
+            method="POST"
+            reloadDocument
+            className="flex w-full items-center justify-center border-2 border-brand-red col-span-2"
           >
-            {YEARS.map((year) => {
-              return (
-                <option key={`year-option-${year}`} value={year}>{year}</option>
-              )
-            })}
-          </select>
-        </Form>
-        <Form action="/cuts" method="POST">
-          <input
-            type="hidden"
-            name="_action"
-            value={INTENT.setMonth}
-          />
-          <input
-            type="hidden"
-            name="year"
-            defaultValue={searchParams.get('year') ?? undefined}
-          />
-          <select
-            defaultValue={searchParams.get('month') ?? undefined}
-            className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
-            name="month"
-            onChange={(event) => {
-              (event.target.parentElement as HTMLFormElement).submit()
-            }}
-          >
-            {MONTHS.map((month) => {
-              const value = month.padStart(2, "0")
-              return (
-                <option key={`month-option-${month}`} value={value}>{month}</option>
-              )
-            })}
-          </select>
-        </Form>
+            <input
+              type="hidden"
+              name="_action"
+              value={ACTION.clearQuery}
+            />
+            <input
+              type="hidden"
+              name="year"
+              defaultValue={searchParams.get('year') ?? undefined}
+            />
+            <input
+              type="hidden"
+              name="month"
+              defaultValue={searchParams.get('month') ?? undefined}
+            />
+            <button
+              className="mabry border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone"
+              type="submit"
+            >
+              Limpiar filtro
+            </button>
+          </Form>
+        ) : null}
+        {!query ? (
+          <Form>
+            <input
+              type="hidden"
+              name="_action"
+              value={ACTION.setYear}
+            />
+            <input
+              type="hidden"
+              name="month"
+              defaultValue={searchParams.get('month') ?? undefined}
+            />
+            <select
+              defaultValue={searchParams.get('year') ?? undefined}
+              className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
+              name="year"
+              onChange={(event) => {
+                (event.target.parentElement as HTMLFormElement).submit()
+              }}
+            >
+              {YEARS.map((year) => {
+                return (
+                  <option key={`year-option-${year}`} value={year}>{year}</option>
+                )
+              })}
+            </select>
+          </Form>
+        ) : null}
+        {!query ? (
+          <Form action="/cuts" method="POST">
+            <input
+              type="hidden"
+              name="_action"
+              value={ACTION.setMonth}
+            />
+            <input
+              type="hidden"
+              name="year"
+              defaultValue={searchParams.get('year') ?? undefined}
+            />
+            <select
+              defaultValue={searchParams.get('month') ?? undefined}
+              className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
+              name="month"
+              onChange={(event) => {
+                (event.target.parentElement as HTMLFormElement).submit()
+              }}
+            >
+              {MONTHS.map((month) => {
+                const value = month.padStart(2, "0")
+                return (
+                  <option key={`month-option-${month}`} value={value}>{month}</option>
+                )
+              })}
+            </select>
+          </Form>
+        ) : null}
       </section>
-      <section className="mt-2 flex flex-col space-y-3">
-        <ul className="w-full grow space-y-2">
+      <section className="mt-6 flex flex-col space-y-7">
+        <ul className="w-full grow space-y-6">
           {cutsByDay
             .reverse()
             .map(([date, cutsByDay], index) => {
@@ -318,29 +389,60 @@ export default function() {
               )
             })}
         </ul>
-        <Form action="/cuts" method="POST" reloadDocument>
-          <input
-            type="hidden"
-            name="_action"
-            value={INTENT.nextMonth}
-          />
-          <input
-            type="hidden"
-            name="year"
-            defaultValue={searchParams.get('year') ?? undefined}
-          />
-          <input
-            type="hidden"
-            name="month"
-            defaultValue={searchParams.get('month') ?? undefined}
-          />
-          <button
-            className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
-            type='submit'
+        {!query ? (
+          <Form action="/cuts" method="POST" reloadDocument>
+            <input
+              type="hidden"
+              name="_action"
+              value={ACTION.nextMonth}
+            />
+            <input
+              type="hidden"
+              name="year"
+              defaultValue={searchParams.get('year') ?? undefined}
+            />
+            <input
+              type="hidden"
+              name="month"
+              defaultValue={searchParams.get('month') ?? undefined}
+            />
+            <button
+              className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
+              type='submit'
+            >
+              Mes anterior
+            </button>
+          </Form>
+        ) : null}
+        {query ? (
+          <Form
+            method="POST"
+            reloadDocument
+            className="flex w-full items-center justify-center border-2 border-brand-red col-span-2"
           >
-            Mes anterior
-          </button>
-        </Form>
+            <input
+              type="hidden"
+              name="_action"
+              value={ACTION.clearQuery}
+            />
+            <input
+              type="hidden"
+              name="year"
+              defaultValue={searchParams.get('year') ?? undefined}
+            />
+            <input
+              type="hidden"
+              name="month"
+              defaultValue={searchParams.get('month') ?? undefined}
+            />
+            <button
+              className="mabry border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone"
+              type="submit"
+            >
+              Limpiar filtro
+            </button>
+          </Form>
+        ) : null}
       </section>
     </>
   )
