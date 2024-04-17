@@ -238,7 +238,7 @@ export default function() {
               defaultValue={searchParams.get('month') ?? undefined}
             />
             <button
-              className="mabry border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone w-full"
+              className="mabry border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone w-full"
               type="submit"
             >
               Limpiar filtro
@@ -259,7 +259,7 @@ export default function() {
             />
             <select
               defaultValue={searchParams.get('year') ?? undefined}
-              className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
+              className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
               name="year"
               onChange={(event) => {
                 (event.target.parentElement as HTMLFormElement).submit()
@@ -287,7 +287,7 @@ export default function() {
             />
             <select
               defaultValue={searchParams.get('month') ?? undefined}
-              className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:border-l-0 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
+              className="mabry border-2 border-brand-red bg-transparent px-4 py-2 text-2xl text-brand-red outline-4 outline-offset-0 transition-colors duration-100 focus-visible:outline focus-visible:outline-brand-blue md:hover:bg-brand-red md:hover:text-brand-stone h-full w-full"
               name="month"
               onChange={(event) => {
                 (event.target.parentElement as HTMLFormElement).submit()
