@@ -36,14 +36,12 @@
     "oslo": "^1.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remix-utils": "^7.6.0",
     "valibot": "^0.30.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.12.2",
     "@cloudflare/workers-types": "^4.20240405.0",
     "@remix-run/dev": "^2.8.1",
-    "@sly-cli/sly": "^1.10.0",
     "@types/react": "^18.2.74",
     "@types/react-dom": "^18.2.24",
     "autoprefixer": "^10.4.19",
