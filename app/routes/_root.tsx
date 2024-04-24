@@ -17,7 +17,7 @@ export async function loader({
   return { userId: user?.id }
 }
 
-export default function () {
+export default function() {
   const { userId } = useLoaderData<typeof loader>()
   const logoRef = useRef<HTMLAnchorElement>(null)
   const rankingRef = useRef<HTMLAnchorElement>(null)
@@ -121,7 +121,7 @@ export default function () {
                     </button>
                   </fetcher.Form>
                 </li>
-                )
+              )
               : (
                 <li
                   className={clsx("flex", [
@@ -160,7 +160,7 @@ export default function () {
                     />
                   </Link>
                 </li>
-                )}
+              )}
           </ul>
         </nav>
         <nav className="pointer-events-auto md:hidden">
@@ -179,7 +179,7 @@ export default function () {
                     </button>
                   </fetcher.Form>
                 </li>
-                )
+              )
               : (
                 <li className="flex">
                   <Link
@@ -190,7 +190,7 @@ export default function () {
                     <LoginIcon className="h-8 text-brand-blue" />
                   </Link>
                 </li>
-                )}
+              )}
             <li className="flex">
               <Link
                 to="/navigate"
