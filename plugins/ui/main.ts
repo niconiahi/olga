@@ -1,6 +1,6 @@
-import { Plugin } from 'vite';
 import fs from 'fs';
 import path from 'path';
+import { Plugin } from 'vite';
 import { glob } from 'glob';
 import { renderToString } from 'react-dom/server';
 import { createElement } from 'react';
@@ -57,35 +57,59 @@ function getFiles(directory: string): string[] {
 }
 
 type Prop = { name: string, type: string }
-function getComponentProps(filePath: string, componentName: string) {
+
+function getComponentProps(filePath: string, componentName: string): Prop[] {
   const content = fs.readFileSync(filePath, 'utf-8');
   const sourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true);
 
   let props: Prop[] = [];
 
   function visit(node: ts.Node) {
+    // Check for function declarations
     if (
       ts.isFunctionDeclaration(node) &&
       node.name &&
       node.name.text === componentName &&
       node.parameters.length > 0
     ) {
-      const param = node.parameters[0];
-      if (param && param.type) {
-        const type = param.type;
-        if (ts.isTypeLiteralNode(type)) {
-          type.members.forEach((member) => {
-            if (ts.isPropertySignature(member) && member.name) {
-              const name = member.name.getText();
-              const type = member.type ? member.type.getText() : 'undefined';
-              props.push({ name, type });
-            }
-          });
-        }
-      }
+      getPropsFromParams(node.parameters, props);
     }
+
+    // Check for variable declarations with arrow functions
+    if (ts.isVariableStatement(node)) {
+      node.declarationList.declarations.forEach(declaration => {
+        if (
+          ts.isVariableDeclaration(declaration) &&
+          declaration.name.getText() === componentName &&
+          declaration.initializer &&
+          ts.isArrowFunction(declaration.initializer)
+        ) {
+          getPropsFromParams(declaration.initializer.parameters, props);
+        }
+      });
+    }
+
+    ts.forEachChild(node, visit);
   }
 
+
   sourceFile.forEachChild(visit);
+
   return props;
+}
+
+function getPropsFromParams(parameters: readonly ts.ParameterDeclaration[], props: Prop[]) {
+  const param = parameters[0];
+  if (param && param.type) {
+    const type = param.type;
+    if (ts.isTypeLiteralNode(type)) {
+      type.members.forEach((member) => {
+        if (ts.isPropertySignature(member) && member.name) {
+          const name = member.name.getText();
+          const type = member.type ? member.type.getText() : 'undefined';
+          props.push({ name, type });
+        }
+      });
+    }
+  }
 }
