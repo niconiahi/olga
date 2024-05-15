@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react"
-import type { ReactElement } from "react"
 
-export default function () {
+export default function() {
   const inputRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
@@ -17,14 +16,16 @@ export default function () {
         href="/login/google"
         className="mabry flex w-full flex-row items-center justify-center border-2 border-solid border-google-blue bg-google-blue py-2 text-2xl text-brand-stone outline-4 -outline-offset-1 focus-visible:outline focus-visible:outline-brand-red"
       >
-        <GoogleIcon className="mr-2 h-6 w-6" />
+        <GoogleIcon className="mr-2 h-6 w-6" color="bluj" />
         Ingresar con Google
       </a>
     </section>
   )
 }
 
-function GoogleIcon({ className }: { className: string }): ReactElement {
+// @component
+export function GoogleIcon({ className, color }: { className: string, color: string }) {
+  console.log('color', color)
   return (
     <svg
       aria-hidden="true"
