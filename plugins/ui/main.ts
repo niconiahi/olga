@@ -56,13 +56,14 @@ function getFiles(directory: string): string[] {
   return files;
 }
 
+type Prop = { name: string, type: string }
 function getComponentProps(filePath: string, componentName: string) {
   const content = fs.readFileSync(filePath, 'utf-8');
   const sourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true);
 
-  let props = [];
+  let props: Prop[] = [];
 
-  functio: visit(node) {
+  function visit(node: ts.Node) {
     if (
       ts.isFunctionDeclaration(node) &&
       node.name &&
@@ -72,21 +73,19 @@ function getComponentProps(filePath: string, componentName: string) {
       const param = node.parameters[0];
       if (param && param.type) {
         const type = param.type;
-        if (ts.isTypeLiteralNode(type) || ts.isTypeReferenceNode(type)) {
+        if (ts.isTypeLiteralNode(type)) {
           type.members.forEach((member) => {
             if (ts.isPropertySignature(member) && member.name) {
-              const propName = member.name.getText();
-              const propType = member.type.getText();
-              props.push({ propName, propType });
+              const name = member.name.getText();
+              const type = member.type ? member.type.getText() : 'undefined';
+              props.push({ name, type });
             }
           });
         }
       }
     }
-    ts.forEachChild(node, visit);
   }
 
-  visit(sourceFile);
+  sourceFile.forEachChild(visit);
   return props;
 }
-
