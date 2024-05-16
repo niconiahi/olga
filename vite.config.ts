@@ -9,11 +9,11 @@ import { ui } from "./plugins/ui/main"
 
 export default defineConfig({
   plugins: [
-    ui(),
     remixDevTools(),
     remixCloudflareDevProxy(),
     remix(),
     tsconfigPaths(),
+    ui(),
   ],
   optimizeDeps: {
     exclude: ["oslo"],

@@ -5,9 +5,6 @@ export default antfu(
     stylistic: {
       quotes: "double",
     },
-    formatters: {
-      markdown: "prettier",
-    },
     ignores: ["app/generated/db.ts", "adapters/**"],
   },
   {

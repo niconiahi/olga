@@ -12,24 +12,9 @@ export function ui(): Plugin {
     configureServer(server) {
       server.middlewares.use('/ui', async (_, res) => {
         const files = getFiles('app');
-        const root = await createRoot(files, server);
-        console.log('root', root)
-        // fs.writeFileSync(path.resolve(__dirname, 'root.ts'), root);
 
-        const html = `
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UI Components</title>
-  </head>
-  <body>
-    <div id="root">${renderToString(root)}</div>
-    <script type="module" src="/ui/client.js"></script>
-  </body>
-  </html>
-`;
+        const root = createRoot();
+        const html = renderToString(root);
         res.setHeader('Content-Type', 'text/html');
         res.end(html);
       });
@@ -134,10 +119,7 @@ function getType(raw: string): Type {
   return { type: "string", value: raw }
 }
 
-export async function createRoot(
-  files: string[],
-  server: ViteDevServer
-) {
+function createRoot(files: string[], server: ViteDevServer) {
   const componentsPromises = files.map(async (file) => {
     const module_ = await server.ssrLoadModule(
       file.replace('/Users/niconiahi/Documents/repos/olga/', '')

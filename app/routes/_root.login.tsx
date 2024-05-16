@@ -16,7 +16,7 @@ export default function() {
         href="/login/google"
         className="mabry flex w-full flex-row items-center justify-center border-2 border-solid border-google-blue bg-google-blue py-2 text-2xl text-brand-stone outline-4 -outline-offset-1 focus-visible:outline focus-visible:outline-brand-red"
       >
-        <GoogleIcon className="mr-2 h-6 w-6" color="bluj" />
+        <GoogleIcon className="mr-2 h-6 w-6" />
         Ingresar con Google
       </a>
     </section>
@@ -24,8 +24,13 @@ export default function() {
 }
 
 // @component
-export function GoogleIcon({ className, color }: { className: string, color: string }) {
-  console.log('color', color)
+export function GoogleIcon({
+  className,
+  color
+}: {
+  className: string,
+  color?: string
+}) {
   return (
     <svg
       aria-hidden="true"
@@ -46,11 +51,11 @@ export function GoogleIcon({ className, color }: { className: string, color: str
 }
 
 // @component
-export const FirefoxIcon = ({ className, intent }: { className: string, intent: string }) => {
+export const FirefoxIcon = ({ color, hue }: { color: 'red' | 'blue', hue: number }) => {
   return (
     <svg
       aria-hidden="true"
-      className={className}
+      className={`bg-${color}-${hue}`}
       focusable="false"
       data-prefix="fab"
       data-icon="google"
