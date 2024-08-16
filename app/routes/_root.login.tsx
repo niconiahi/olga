@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react"
 
-export default function() {
+export default function () {
   const inputRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
@@ -26,10 +26,8 @@ export default function() {
 // @component
 export function GoogleIcon({
   className,
-  color
 }: {
-  className: string,
-  color?: string
+  className: string
 }) {
   return (
     <svg
@@ -51,7 +49,7 @@ export function GoogleIcon({
 }
 
 // @component
-export const FirefoxIcon = ({ color, hue }: { color: 'red' | 'blue', hue: number }) => {
+export function FirefoxIcon({ color, hue }: { color: "red" | "blue", hue: number }) {
   return (
     <svg
       aria-hidden="true"

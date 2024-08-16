@@ -21,31 +21,29 @@ export type Cuts = v.Output<typeof CutsSchema>
 
 export async function loader({
   context,
-  request
+  request,
 }: LoaderFunctionArgs) {
   const url = new URL(request.url)
   const searchParams = url.searchParams
   const queryBuilder = getQueryBuilder(context)
 
-  let month = searchParams.get('month')
-  if (!month) {
-    throw error(400, 'month search param is required')
-  }
+  const month = searchParams.get("month")
+  if (!month)
+    throw error(400, "month search param is required")
 
-  let year = searchParams.get('year')
-  if (!year) {
-    throw error(400, 'month search param is required')
-  }
+  const year = searchParams.get("year")
+  if (!year)
+    throw error(400, "month search param is required")
 
   const _lastDate = DAYS
     .toSorted()
     .reverse()
-    .find((day) => getCurrentMonthFirstMatch(year, month, day))
+    .find(day => getCurrentMonthFirstMatch(year, month, day))
   const lastDate = v.parse(DateSchema, _lastDate)
 
   const _firstDate = DAYS
     .toSorted()
-    .find((day) => getCurrentMonthFirstMatch(year, month, day))
+    .find(day => getCurrentMonthFirstMatch(year, month, day))
   const firstDate = v.parse(DateSchema, _firstDate)
 
   const cuts = await queryBuilder
@@ -59,9 +57,9 @@ export async function loader({
       "cut.label",
       "cut.start",
     ])
-    .where((eb) =>
+    .where(eb =>
       eb("video.date", "<", lastDate.toISOString())
-        .and("video.date", ">", firstDate.toISOString())
+        .and("video.date", ">", firstDate.toISOString()),
     )
     .execute()
 

@@ -64,7 +64,7 @@ export async function action({ request }: LoaderFunctionArgs) {
   return redirect(url.toString())
 }
 
-export default function() {
+export default function () {
   const { url } = useLoaderData<typeof loader>()
   const [searchParams] = useSearchParams()
   const start = searchParams.get("start")
@@ -162,9 +162,8 @@ function Process({
 
   useEffect(() => {
     async function run() {
-      if (current > end) {
+      if (current > end)
         return
-      }
 
       const next = DAYS[current + 1]
       const date = new Date(next)
@@ -191,9 +190,8 @@ function Process({
         .then((json) => {
           return v.parse(ResponseSchema, json)
         })
-      if (errorMessage) {
+      if (errorMessage)
         console.error(errorMessage)
-      }
 
       setVideos(prevVideos => [...prevVideos, ...addedVideos])
       setSearchParams((prevSearchParams) => {

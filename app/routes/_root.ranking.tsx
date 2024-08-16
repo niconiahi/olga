@@ -39,7 +39,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return { cutsByShow: _result.output }
 }
 
-export default function() {
+export default function () {
   const { cutsByShow } = useLoaderData<typeof loader>()
 
   return (

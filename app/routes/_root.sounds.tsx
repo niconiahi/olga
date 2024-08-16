@@ -17,7 +17,7 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   return json({ sounds, origin: url.origin })
 }
 
-export default function() {
+export default function () {
   const { origin, sounds } = useLoaderData<typeof loader>()
 
   return (
@@ -59,7 +59,7 @@ function Button({
       <figcaption
         className="mabry uppercase text-brand-blue"
       >
-        {key.replaceAll('-', ' ').replace(".mp3", "")}
+        {key.replaceAll("-", " ").replace(".mp3", "")}
       </figcaption>
       <audio
         className=""

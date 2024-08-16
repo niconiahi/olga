@@ -23,5 +23,5 @@ export function getIsoString(
 
 export const DateSchema = v.coerce(
   v.date(),
-  (input) => new Date(input as string)
+  input => new Date(input as string),
 )
