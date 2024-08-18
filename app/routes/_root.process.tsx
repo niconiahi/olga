@@ -1,13 +1,14 @@
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { redirect } from "@remix-run/cloudflare"
 import { Form, json, useLoaderData, useSearchParams } from "@remix-run/react"
-import * as v from "valibot"
 import { useEffect, useState } from "react"
-import { getDay, getMonth, getYear } from "~/utils/date"
-import { error } from "~/utils/http"
+import * as v from "valibot"
+
+import { DAYS } from "~/generated/days"
 import type { Videos } from "~/routes/cut.add"
 import { ResponseSchema } from "~/routes/cut.add"
-import { DAYS } from "~/generated/days"
+import { getDay, getMonth, getYear } from "~/utils/date"
+import { error } from "~/utils/http"
 
 export function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)
@@ -46,18 +47,19 @@ export async function action({ request }: LoaderFunctionArgs) {
     const startIndex = DAYS.findIndex((_day) => {
       return _day === `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
     })
-    if (startIndex === -1)
+    if (startIndex === -1) {
       throw error(400, "this day is not on the list of days")
+    }
 
     searchParams.set("start", String(startIndex))
-  }
-  else {
+  } else {
     searchParams.set("start", start)
     const endIndex = DAYS.findIndex((_day) => {
       return _day === `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
     })
-    if (endIndex === -1)
+    if (endIndex === -1) {
       throw error(400, "this day is not on the list of days")
+    }
 
     searchParams.set("end", String(endIndex))
   }
@@ -162,8 +164,9 @@ function Process({
 
   useEffect(() => {
     async function run() {
-      if (current > end)
+      if (current > end) {
         return
+      }
 
       const next = DAYS[current + 1]
       const date = new Date(next)
@@ -190,8 +193,9 @@ function Process({
         .then((json) => {
           return v.parse(ResponseSchema, json)
         })
-      if (errorMessage)
+      if (errorMessage) {
         console.error(errorMessage)
+      }
 
       setVideos(prevVideos => [...prevVideos, ...addedVideos])
       setSearchParams((prevSearchParams) => {

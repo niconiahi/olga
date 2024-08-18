@@ -15,30 +15,38 @@ export function getShow(title: string): string {
   const regex = /(ser[ií]a\sincre[ií]ble|so[ñn][eé]?\sque\svolaba|mi\sprimo\ses\sas[ií]|para[ií]so\sfiscal|se\sextra[ñn]a\sa\sla\snona|generaci[oó]n\sdorada|cuando\seric\sconoci[oó]\sa\smilton)/g
   const matches = title.toLocaleLowerCase().match(regex)
 
-  if (!matches)
+  if (!matches) {
     throw new Error("the \"title\" should contain the \"show\" name")
+  }
 
   const match = matches[0].toLocaleLowerCase()
-  if (match.includes("volaba"))
+  if (match.includes("volaba")) {
     return "sone-que-volaba"
+  }
 
-  if (match.includes("incre"))
+  if (match.includes("incre")) {
     return "seria-increible"
+  }
 
-  if (match.includes("primo"))
+  if (match.includes("primo")) {
     return "mi-primo-es-asi"
+  }
 
-  if (match.includes("fiscal"))
+  if (match.includes("fiscal")) {
     return "paraiso-fiscal"
+  }
 
-  if (match.includes("nona"))
+  if (match.includes("nona")) {
     return "se-extrana-a-la-nona"
+  }
 
-  if (match.includes("dorada"))
+  if (match.includes("dorada")) {
     return "generacion-dorada"
+  }
 
-  if (match.includes("milton"))
+  if (match.includes("milton")) {
     return "cuando-eric-conocio-a-milton"
+  }
 
   throw new Error(`show title wasn't correctly captured`)
 }

@@ -2,6 +2,7 @@ import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { json, useLoaderData } from "@remix-run/react"
 import { useEffect, useRef } from "react"
 import * as v from "valibot"
+
 import { getEnv } from "~/utils/env"
 
 const SoundSchema = v.object({
@@ -49,8 +50,9 @@ function Button({
       .then((blob) => {
         const objectUrl = URL.createObjectURL(blob)
         const audioElement = audioRef.current
-        if (audioElement)
+        if (audioElement) {
           audioElement.src = objectUrl
+        }
       })
   }, [])
 

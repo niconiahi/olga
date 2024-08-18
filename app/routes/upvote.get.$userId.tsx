@@ -1,8 +1,9 @@
-import * as v from "valibot"
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { json } from "@remix-run/cloudflare"
-import { getQueryBuilder } from "~/utils/query-builder"
+import * as v from "valibot"
+
 import { error } from "~/utils/http"
+import { getQueryBuilder } from "~/utils/query-builder"
 
 const UserIdSchema = v.string()
 export const UpvotesSchema = v.array(
@@ -24,8 +25,9 @@ export async function loader({
     UserIdSchema,
     _userId,
   )
-  if (!userIdResult.success)
+  if (!userIdResult.success) {
     throw error(500, userIdResult.issues[0].message)
+  }
 
   const userId = userIdResult.output
 

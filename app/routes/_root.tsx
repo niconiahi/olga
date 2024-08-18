@@ -1,12 +1,13 @@
-import { useRef } from "react"
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { Link, Outlet, useFetcher, useLoaderData, useLocation } from "@remix-run/react"
 import { clsx } from "clsx"
-import { validateSession } from "~/utils/auth"
-import { LogoutIcon } from "~/components/icons/logout"
-import { LoginIcon } from "~/components/icons/login"
-import { OlgaIcon } from "~/components/icons/olga"
+import { useRef } from "react"
+
 import { HamburgerIcon } from "~/components/icons/hamburger"
+import { LoginIcon } from "~/components/icons/login"
+import { LogoutIcon } from "~/components/icons/logout"
+import { OlgaIcon } from "~/components/icons/olga"
+import { validateSession } from "~/utils/auth"
 
 export async function loader({
   request,

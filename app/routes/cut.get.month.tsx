@@ -1,10 +1,11 @@
-import * as v from "valibot"
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { json } from "@remix-run/cloudflare"
-import { getQueryBuilder } from "~/utils/query-builder"
-import { error } from "~/utils/http"
+import * as v from "valibot"
+
 import { DAYS } from "~/generated/days"
 import { DateSchema } from "~/utils/date"
+import { error } from "~/utils/http"
+import { getQueryBuilder } from "~/utils/query-builder"
 
 export const CutsSchema = v.array(
   v.object({
@@ -28,12 +29,14 @@ export async function loader({
   const queryBuilder = getQueryBuilder(context)
 
   const month = searchParams.get("month")
-  if (!month)
+  if (!month) {
     throw error(400, "month search param is required")
+  }
 
   const year = searchParams.get("year")
-  if (!year)
+  if (!year) {
     throw error(400, "month search param is required")
+  }
 
   const _lastDate = DAYS
     .toSorted()

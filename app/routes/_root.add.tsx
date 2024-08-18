@@ -2,6 +2,7 @@ import { useFetcher } from "@remix-run/react"
 import clsx from "clsx"
 import { useEffect, useRef } from "react"
 import * as v from "valibot"
+
 import { ResponseSchema } from "~/routes/cut.add"
 
 export default function () {
@@ -9,8 +10,9 @@ export default function () {
   const fetcher = useFetcher()
 
   useEffect(() => {
-    if (!inputRef.current)
+    if (!inputRef.current) {
       return
+    }
 
     inputRef.current.focus()
   })

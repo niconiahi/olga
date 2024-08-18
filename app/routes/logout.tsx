@@ -1,4 +1,5 @@
 import type { ActionFunctionArgs } from "@remix-run/cloudflare"
+
 import { getAuth, validateSession } from "~/utils/auth"
 
 export async function action({

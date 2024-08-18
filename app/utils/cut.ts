@@ -4,11 +4,13 @@ function getSafeStart(start: string) {
   const pieces = start.replaceAll("\\n", "").split(":")
   return pieces
     .map((digit, i) => {
-      if (pieces.length === 3 && i === 0)
+      if (pieces.length === 3 && i === 0) {
         return digit.startsWith("0") ? digit.replace("0", "") : digit
+      }
 
-      if (pieces.length === 2 && i === 0)
+      if (pieces.length === 2 && i === 0) {
         return digit.padStart(2, "0")
+      }
 
       return digit.padEnd(2, "0")
     })
@@ -56,12 +58,10 @@ export function getSeconds(start: string) {
     seconds += parts[0] * 3600
     seconds += parts[1] * 60
     seconds += parts[2]
-  }
-  else if (parts.length === 2) {
+  } else if (parts.length === 2) {
     seconds += parts[0] * 60
     seconds += parts[1]
-  }
-  else if (parts.length === 1) {
+  } else if (parts.length === 1) {
     seconds = parts[0]
   }
   return seconds

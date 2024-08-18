@@ -1,6 +1,7 @@
-import type { SVGProps } from "react"
 import { clsx } from "clsx"
+import type { SVGProps } from "react"
 import { twMerge } from "tailwind-merge"
+
 import type { IconName } from "~/components/icon/name"
 import href from "~/components/icon/sprite.svg"
 

@@ -1,12 +1,13 @@
-import { OAuth2RequestError } from "arctic"
-import { generateId } from "lucia"
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { redirect } from "@remix-run/cloudflare"
+import { OAuth2RequestError } from "arctic"
+import { generateId } from "lucia"
 import * as v from "valibot"
-import { getQueryBuilder } from "~/utils/query-builder"
-import { createGoogleAuth, getAuth, validateSession } from "~/utils/auth"
+
 import { getCodeVerifierCookie, getStateCookie } from "~/cookies.server"
+import { createGoogleAuth, getAuth, validateSession } from "~/utils/auth"
 import { error } from "~/utils/http"
+import { getQueryBuilder } from "~/utils/query-builder"
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const auth = getAuth(context)
@@ -22,8 +23,9 @@ export async function loader({ request, context }: LoaderFunctionArgs) {
   const code = searchParams.get("code")
   const state = searchParams.get("state")
 
-  if (!code || !storedState || !storedCodeVerifier || state !== storedState || typeof storedCodeVerifier !== "string")
+  if (!code || !storedState || !storedCodeVerifier || state !== storedState || typeof storedCodeVerifier !== "string") {
     throw error(400, `expected Google's states to match but the don't`)
+  }
 
   const tokens = await googleAuth.validateAuthorizationCode(code, storedCodeVerifier)
   const response = await fetch("https://openidconnect.googleapis.com/v1/userinfo", {

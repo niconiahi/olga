@@ -1,13 +1,15 @@
-import { generateCodeVerifier, generateState } from "arctic"
 import { redirect } from "@remix-run/cloudflare"
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
-import { createGoogleAuth, validateSession } from "~/utils/auth"
+import { generateCodeVerifier, generateState } from "arctic"
+
 import { getCodeVerifierCookie, getStateCookie } from "~/cookies.server"
+import { createGoogleAuth, validateSession } from "~/utils/auth"
 
 export async function loader({ request, context }: LoaderFunctionArgs) {
   const { session } = await validateSession(request, context)
-  if (session)
+  if (session) {
     throw redirect("/")
+  }
 
   const googleAuth = createGoogleAuth(context)
   const state = generateState()

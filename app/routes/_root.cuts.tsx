@@ -1,23 +1,24 @@
-import clsx from "clsx"
 import type { ActionFunctionArgs, AppLoadContext, LoaderFunctionArgs } from "@remix-run/cloudflare"
 import { defer } from "@remix-run/cloudflare"
-import * as v from "valibot"
 import { Await, Form, redirect, useFetcher, useLoaderData, useSearchParams } from "@remix-run/react"
+import clsx from "clsx"
 import type { ReactNode } from "react"
 import { Suspense, useEffect, useState } from "react"
-import type { Cuts } from "~/routes/cut.get.all"
-import { CutsSchema } from "~/routes/cut.get.all"
+import * as v from "valibot"
+
 import { HeartIcon } from "~/components/icons/heart"
-import { getSeconds } from "~/utils/cut"
-import type { Show } from "~/utils/video"
-import { ShowSchema } from "~/utils/video"
-import { DateSchema, getDay, getMonth, getYear } from "~/utils/date"
-import { validateSession } from "~/utils/auth"
 import { ShowIcon } from "~/components/icons/show-icon"
-import { error } from "~/utils/http"
-import { UpvotesSchema } from "~/routes/upvote.get.$userId"
-import { getQueryBuilder } from "~/utils/query-builder"
 import { DAYS } from "~/generated/days"
+import { CutsSchema } from "~/routes/cut.get.all"
+import type { Cuts } from "~/routes/cut.get.all"
+import { UpvotesSchema } from "~/routes/upvote.get.$userId"
+import { validateSession } from "~/utils/auth"
+import { getSeconds } from "~/utils/cut"
+import { DateSchema, getDay, getMonth, getYear } from "~/utils/date"
+import { error } from "~/utils/http"
+import { getQueryBuilder } from "~/utils/query-builder"
+import { ShowSchema } from "~/utils/video"
+import type { Show } from "~/utils/video"
 
 export const ACTION = {
   query: "query" as const,
@@ -31,8 +32,9 @@ export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData()
 
   const action = formData.get("_action")
-  if (!action)
+  if (!action) {
     throw error(400, "action is required")
+  }
 
   switch (action) {
     case ACTION.clearQuery: {
@@ -80,8 +82,9 @@ export async function action({ request }: ActionFunctionArgs) {
           return getNextMonthFirstMatch(year, month, day)
         }),
       )
-      if (!nextDateResult.success)
+      if (!nextDateResult.success) {
         throw error(400, "new month is expected when setting it")
+      }
 
       const nextDate = nextDateResult.output
 
@@ -136,14 +139,14 @@ export async function loader({
       ? `${url.origin}/cut/get/all`
       : `${url.origin}/cut/get/month?month=${month}&year=${year}`)).json(),
   )
-  if (!cutsResult.success)
+  if (!cutsResult.success) {
     throw error(400, cutsResult.issues[0].message)
+  }
 
   const cuts = cutsResult.output
 
   return defer({
     cuts,
-    url: url.toString(),
     userId: user?.id,
     query,
     upvotes,
@@ -154,14 +157,15 @@ const YEARS = ["2023", "2024"]
 const MONTHS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 
 export default function () {
-  const { cuts: initialCuts, query, userId, upvotes, url: _url } = useLoaderData<typeof loader>()
+  const { cuts: initialCuts, query, userId, upvotes } = useLoaderData<typeof loader>()
   const fetcher = useFetcher<typeof loader>()
   const [searchParams] = useSearchParams()
   const [cuts, setCuts] = useState<Cuts>(initialCuts)
 
   useEffect(() => {
-    if (fetcher.data)
+    if (fetcher.data) {
       setCuts(cuts)
+    }
   }, [fetcher.data])
 
   const cutsByDay = v.parse(
@@ -362,8 +366,9 @@ export default function () {
                                         UpvotesSchema,
                                         _upvotes,
                                       )
-                                      if (!upvotesResult.success)
+                                      if (!upvotesResult.success) {
                                         throw error(400, upvotesResult.issues[0].message)
+                                      }
 
                                       const upvotes = upvotesResult.output
 
@@ -786,8 +791,9 @@ async function getLastCutDate(context: AppLoadContext) {
     .orderBy("video.date", "desc")
     .limit(1)
     .executeTakeFirst()
-  if (!lastCut)
+  if (!lastCut) {
     throw error(400, "there are no cuts yet. Please, ad one")
+  }
 
   const last = lastCut.date
 

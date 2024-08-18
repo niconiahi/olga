@@ -4,8 +4,9 @@ export default function () {
   const inputRef = useRef<HTMLInputElement>()
 
   useEffect(() => {
-    if (inputRef.current === undefined)
+    if (inputRef.current === undefined) {
       return
+    }
 
     inputRef.current.focus()
   })

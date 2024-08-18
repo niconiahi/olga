@@ -1,6 +1,7 @@
 import type { ActionFunctionArgs } from "@remix-run/cloudflare"
 import { redirect } from "@remix-run/cloudflare"
 import * as v from "valibot"
+
 import { error } from "~/utils/http"
 
 const ValuesSchema = v.object({
@@ -28,8 +29,9 @@ export async function action({ request }: ActionFunctionArgs) {
   }
   const { cutId, userId, isUpvoted } = valuesResult.output
 
-  if (!userId)
+  if (!userId) {
     throw redirect(`/login`)
+  }
 
   const url = new URL(request.url)
 
@@ -53,8 +55,7 @@ export async function action({ request }: ActionFunctionArgs) {
     const upvote = result.output
 
     return upvote
-  }
-  else {
+  } else {
     const data = await (
       await fetch(`${url.origin}/upvote/create/[id]`, {
         method: "POST",

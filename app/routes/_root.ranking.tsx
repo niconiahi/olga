@@ -1,13 +1,14 @@
-import clsx from "clsx"
 import type { LoaderFunctionArgs } from "@remix-run/cloudflare"
-import * as v from "valibot"
 import { useLoaderData } from "@remix-run/react"
+import clsx from "clsx"
+import * as v from "valibot"
+
+import { ShowIcon } from "~/components/icons/show-icon"
 import type { Cuts } from "~/routes/cut.get.ranking"
 import { CutsSchema } from "~/routes/cut.get.ranking"
 import { getSeconds } from "~/utils/cut"
-import { ShowSchema } from "~/utils/video"
-import { ShowIcon } from "~/components/icons/show-icon"
 import { error } from "~/utils/http"
+import { ShowSchema } from "~/utils/video"
 
 const CutsByShowSchema = v.array(
   v.tuple([ShowSchema, CutsSchema]),
@@ -17,8 +18,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)
   const raws = await (await fetch(`${url.origin}/cut/get/ranking`)).json()
   const result = v.safeParse(CutsSchema, raws)
-  if (!result.success)
+  if (!result.success) {
     throw error(400, result.issues[0].message)
+  }
 
   const cuts = result.output
 
@@ -33,8 +35,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }, {}),
   )
   const _result = v.safeParse(CutsByShowSchema, cutsByShow)
-  if (!_result.success)
+  if (!_result.success) {
     throw error(400, _result.issues[0].message)
+  }
 
   return { cutsByShow: _result.output }
 }
